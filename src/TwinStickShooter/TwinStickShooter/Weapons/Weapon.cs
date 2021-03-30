@@ -10,6 +10,7 @@ namespace TwinStickShooter.Weapons
 {
     public interface IWeapon
     {
+        string WeaponName { get; }
         float Damage { get; }
         float FireRate { get; }
 
@@ -23,6 +24,7 @@ namespace TwinStickShooter.Weapons
 
     class Weapon : IWeapon
     {
+        public string WeaponName { get; protected set; }
         public float Damage { get; private set; }
         public float FireRate { get; private set; }
 

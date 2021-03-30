@@ -152,7 +152,7 @@ namespace MonoGameLibrary.Sprite
                 rectangle,
                 null,
                 this.DrawColor,
-                MathHelper.ToRadians(Rotate),
+                Rotate,
                 this.Origin,
                 SpriteEffects,
                 0);

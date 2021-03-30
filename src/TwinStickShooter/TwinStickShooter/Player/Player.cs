@@ -59,8 +59,7 @@ namespace TwinStickShooter.Player
             distance.X = mouse.X - this.Location.X;
             distance.Y = mouse.Y - this.Location.Y;
 
-            //only started working onced I multiplied it by 55. further research needed
-            this.Rotate = (float)Math.Atan2(distance.Y, distance.X) * 55;
+            this.Rotate = (float)Math.Atan2(distance.Y, distance.X);
 
             this.Location += ((this.Controller.Direction * (time / 1000)) * Speed);
         }

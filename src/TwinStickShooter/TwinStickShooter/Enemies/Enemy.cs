@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using MonoGameLibrary.Sprite;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
-namespace TwinStickShooter.Projectiles
+namespace TwinStickShooter.Enemies
 {
-    public class Shot : DrawableSprite
+    class Enemy : DrawableSprite
     {
-
-        public Shot(Game game) : base(game)
+        public Enemy(Game game) : base(game)
         {
-            this.Speed = 400;
+            this.Speed = 200;
+            this.Direction = new Vector2(0, 1);
         }
 
         protected override void LoadContent()
         {
-            this.spriteTexture = this.Game.Content.Load<Texture2D>("shot");
+            this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
             base.LoadContent();
         }
 
@@ -37,5 +37,4 @@ namespace TwinStickShooter.Projectiles
             base.Update(gameTime);
         }
     }
-
 }

@@ -3,57 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TwinStickShooter.Projectiles;
+using TwinStickShooter.Enemies;
 using Microsoft.Xna.Framework;
 using MonoGameLibrary.GameComponents;
 using MonoGameLibrary.Util;
 
 namespace TwinStickShooter.ObjectPool
 {
-    public class ShotPool : DrawableGameComponent, IObjectPool
+    class EnemyPool : DrawableGameComponent, IObjectPool
     {
         int numberOfActiveElements;
-        Queue<Shot> shots;
+        Queue<Enemy> enemies;
         GameConsole console;
 
-        public ShotPool(Game game, int poolSize) : base(game)
+        public EnemyPool(Game game, int poolSize) : base(game)
         {
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
-            shots = new Queue<Shot>();
+            enemies = new Queue<Enemy>();
 
             for (int i = 0; i < poolSize; i++)
             {
-                Shot s = new Shot(game);
-                s.Initialize();
-                s.Enabled = false;
-                shots.Enqueue(s);
+                Enemy e = new Enemy(game);
+                e.Initialize();
+                e.Enabled = false;
+                enemies.Enqueue(e);
             }
 
         }
 
         public override void Update(GameTime gameTime)
         {
-            foreach (Shot s in shots)
+            foreach (Enemy e in enemies)
             {
-                if (s.Enabled)
+                if (e.Enabled)
                 {
                     ++numberOfActiveElements;
-                    s.Update(gameTime); //Only update enabled shots
+                    e.Update(gameTime); //Only update enabled shots
                 }
             }
 
-            console.Log("Number of active bullets : ", numberOfActiveElements.ToString());
+            console.Log("Number of active Enemies : ", numberOfActiveElements.ToString());
             numberOfActiveElements = 0;
+
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            foreach (Shot s in shots)
+            foreach (Enemy e in enemies)
             {
-                if (s.Enabled)
+                if (e.Enabled)
                 {
-                    s.Draw(gameTime); //Only update enabled shots
+                    e.Draw(gameTime); //Only update enabled shots
                 }
             }
 
@@ -62,14 +63,14 @@ namespace TwinStickShooter.ObjectPool
 
         public void SpawnFromPool(Vector2 spawnLocation, Vector2 fireDirection)
         {
-            Shot s = shots.Dequeue();
+            Enemy e = enemies.Dequeue();
 
-            s.Enabled = true;
-            s.Location = spawnLocation;
-            s.Direction = fireDirection;
-            s.Direction.Normalize();
+            e.Enabled = true;
+            e.Location = spawnLocation;
+            e.Direction = fireDirection;
+            e.Direction.Normalize();
 
-            shots.Enqueue(s);
+            enemies.Enqueue(e);
         }
     }
 }

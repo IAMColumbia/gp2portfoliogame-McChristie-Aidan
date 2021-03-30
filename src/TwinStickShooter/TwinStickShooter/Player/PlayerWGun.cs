@@ -6,22 +6,34 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TwinStickShooter.Weapons;
+using TwinStickShooter.ObjectPool;
+using MonoGameLibrary.Util;
 
 namespace TwinStickShooter.Player
 {
     class PlayerWGun : Player
     {
-        Weapon gun;
-        bool hasFired;
+        public Weapon gun;
+        public bool hasFired;
+        ShotPool playerBullets;
+        int playerBulletsSize = 75;
+
+        GameConsole console;
+
         public PlayerWGun(Game game) : base(game)
         {
             hasFired = false;
-            gun = new ShotGun(game);
+            playerBullets = new ShotPool(game, playerBulletsSize);
+            game.Components.Add(playerBullets);
+            gun = new ShotGun(game, playerBullets);
+            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
         }
 
         public override void Update(GameTime gameTime)
         {
             CheckForFire();
+            GunSwap();
+            console.Log("player current gun : ", this.gun.WeaponName);
             base.Update(gameTime);
         }
 
@@ -41,6 +53,19 @@ namespace TwinStickShooter.Player
             if (mouseState.LeftButton == ButtonState.Released)
             {
                 hasFired = false;
+            }
+        }
+
+        void GunSwap()
+        {
+            if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
+            {
+                this.gun = new HandGun(this.Game, playerBullets);
+            }
+
+            if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
+            {
+                this.gun = new ShotGun(this.Game, playerBullets);
             }
         }
     }

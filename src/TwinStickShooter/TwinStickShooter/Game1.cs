@@ -5,6 +5,7 @@ using MonoGameLibrary.Util;
 using TwinStickShooter.Player;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Weapons;
+using TwinStickShooter.Enemies;
 
 namespace TwinStickShooter
 {
@@ -17,6 +18,8 @@ namespace TwinStickShooter
         SpriteBatch spriteBatch;
 
         Player.Player player;
+
+        EnemyManager em;
 
         public GameConsole console;
 
@@ -34,6 +37,9 @@ namespace TwinStickShooter
 
             player = new PlayerWGun(this);
             this.Components.Add(player);
+
+            em = new EnemyManager(this);
+            this.Components.Add(em);
         }
 
         /// <summary>
@@ -86,7 +92,7 @@ namespace TwinStickShooter
             console.Log("left mouse button: ", mouseState.LeftButton.ToString());
             console.Log("graphics device manager", this.graphics.ToString());
             console.Log("player rotate : ", player.Rotate.ToString());
-            
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
