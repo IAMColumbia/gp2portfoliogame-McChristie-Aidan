@@ -56,5 +56,12 @@ namespace TwinStickShooter.Enemies
             enemyPool.Draw(gameTime);
             base.Draw(gameTime);
         }
+
+        private void CheckCollision()
+        {
+            foreach (Enemy enemy in enemyPool.enemies)
+            {
+            }
+        }
     }
 }

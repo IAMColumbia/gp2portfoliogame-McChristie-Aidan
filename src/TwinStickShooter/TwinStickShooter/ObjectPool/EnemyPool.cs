@@ -13,7 +13,7 @@ namespace TwinStickShooter.ObjectPool
     class EnemyPool : DrawableGameComponent, IObjectPool
     {
         int numberOfActiveElements;
-        Queue<Enemy> enemies;
+        public Queue<Enemy> enemies;
         GameConsole console;
 
         public EnemyPool(Game game, int poolSize) : base(game)

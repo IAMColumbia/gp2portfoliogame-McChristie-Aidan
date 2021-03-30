@@ -32,8 +32,6 @@ namespace TwinStickShooter.Enemies
                 this.Enabled = false;
             }
 
-
-
             base.Update(gameTime);
         }
     }
