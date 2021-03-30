@@ -1,1 +1,12 @@
 Release Notes version 1 POC
+
+Both the object pool and strategy pattern are working. 
+I have the enemy spawer, enemy pool, player guns, bullet pool, and player working
+I'm very close to having a flexible framework I can build upon for the next assaignments
+
+Somethings not in working order:
+- the gun targeting logic should work off of the rotation of the player rather than the mouse target
+- I need to make and object pool manager or dictionary to store and watch over my pools.
+- Enemies need to die after they are hit by a bullet or run into the player
+- enemies need to be able to target and move toward the player
+-
