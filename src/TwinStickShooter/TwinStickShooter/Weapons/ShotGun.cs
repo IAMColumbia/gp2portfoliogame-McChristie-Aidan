@@ -13,6 +13,7 @@ namespace TwinStickShooter.Weapons
         float ShotGunDamge = 2;
         int numberOfBullets = 10;
         float bulletOffset = .075f;
+        
         ShotPool ammoPool;
         Random random;
 
