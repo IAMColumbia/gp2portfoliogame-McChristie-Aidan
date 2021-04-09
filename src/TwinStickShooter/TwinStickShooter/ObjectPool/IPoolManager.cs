@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TwinStickShooter.ObjectPool
 {
-    interface IObjectPool
+    interface IPoolManager
     {
     }
 }

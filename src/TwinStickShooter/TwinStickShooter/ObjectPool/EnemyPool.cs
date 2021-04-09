@@ -10,7 +10,7 @@ using MonoGameLibrary.Util;
 
 namespace TwinStickShooter.ObjectPool
 {
-    class EnemyPool : DrawableGameComponent, IObjectPool
+    class EnemyPool : DrawableGameComponent, IPoolManager
     {
         int numberOfActiveElements;
         public Queue<Enemy> enemies;

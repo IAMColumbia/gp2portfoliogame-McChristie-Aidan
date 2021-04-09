@@ -16,6 +16,7 @@ namespace TwinStickShooter
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        PoolManager pool;
 
         Player.Player player;
 
@@ -30,13 +31,16 @@ namespace TwinStickShooter
 
             graphics.PreferredBackBufferWidth = 1000;  // set this value to the desired width of your window
             graphics.PreferredBackBufferHeight = 700;   // set this value to the desired height of your window
-            graphics.ApplyChanges();
+            graphics.ApplyChanges();      
 
             console = new GameConsole(this);
             this.Components.Add(console);
 
             player = new PlayerWGun(this);
             this.Components.Add(player);
+
+            pool = new PoolManager(this);
+            this.
 
             em = new EnemyManager(this);
             this.Components.Add(em);

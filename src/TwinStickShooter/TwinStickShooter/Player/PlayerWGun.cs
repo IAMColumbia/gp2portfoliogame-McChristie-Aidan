@@ -13,46 +13,58 @@ namespace TwinStickShooter.Player
 {
     class PlayerWGun : Player
     {
-        public Weapon gun;
-        public bool hasFired;
-        ShotPool playerBullets;
+        bool onCooldown;
+        float cooldownTime = 1000;
         int playerBulletsSize = 75;
 
+
+
+        public Weapon gun;
+
         GameConsole console;
+        PoolManager poolManager;
 
         public PlayerWGun(Game game) : base(game)
         {
-            hasFired = false;
-            playerBullets = new ShotPool(game, playerBulletsSize);
-            game.Components.Add(playerBullets);
-            gun = new ShotGun(game, playerBullets);
+
+            poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+            poolManager.InitializeShotPool("Shots", playerBulletsSize);
+
+            gun = new WaveGun(game, poolManager.poolDictionary);
+
+            this.cooldownTime = gun.CooldownTime;
+            onCooldown = false;
+
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
         }
 
         public override void Update(GameTime gameTime)
         {
-            CheckForFire();
+            CheckForFire(gameTime);
             GunSwap();
             console.Log("player current gun : ", this.gun.WeaponName);
             base.Update(gameTime);
         }
 
-        private void CheckForFire()
+        private void CheckForFire(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
 
-            Vector2 target = mouseState.Position.ToVector2() - this.Location;
-            target.Normalize();
-
-            if (mouseState.LeftButton == ButtonState.Pressed && hasFired == false)
+            if (mouseState.LeftButton == ButtonState.Pressed && onCooldown == false)
             {
-                hasFired = true;
-                gun.Fire(this.Location, target);
+                onCooldown = true;
+                gun.RotationFire(this.Location, this.Rotate);
             }
 
-            if (mouseState.LeftButton == ButtonState.Released)
+            if (onCooldown)
             {
-                hasFired = false;
+                cooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (cooldownTime <= 0f)
+                {
+                    onCooldown = false;
+                    this.cooldownTime = gun.CooldownTime;
+                }
             }
         }
 
@@ -61,11 +73,18 @@ namespace TwinStickShooter.Player
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
                 this.gun = new HandGun(this.Game, playerBullets);
+                this.cooldownTime = gun.CooldownTime;
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new ShotGun(this.Game, playerBullets);
+                this.gun = new WaveGun(this.Game, playerBullets);
+                this.cooldownTime = gun.CooldownTime;
+            }
+            if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
+            {
+                this.gun = new AssultRifle(this.Game, playerBullets);
+                this.cooldownTime = gun.CooldownTime;
             }
         }
     }

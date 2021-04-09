@@ -14,7 +14,7 @@ namespace TwinStickShooter.Projectiles
 
         public Shot(Game game) : base(game)
         {
-            this.Speed = 400;
+            this.Speed = 800;
         }
 
         protected override void LoadContent()

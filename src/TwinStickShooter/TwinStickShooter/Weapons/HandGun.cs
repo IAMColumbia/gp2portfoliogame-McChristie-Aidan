@@ -8,26 +8,22 @@ using Microsoft.Xna.Framework;
 
 namespace TwinStickShooter.Weapons
 {
-    class HandGun : Weapon, IRangedWeapon
+    class HandGun : RangedWeapon
     {
         float HandGunDamge = 2;
-        ShotPool ammoPool;
+        float cooldownTime = 250;
 
-        public ShotPool AmmoPool
+        public HandGun(Game game, PoolManager shotPool) 
         {
-            get { return ammoPool; }
-            private set {  ammoPool = value; }
-        }
-
-        public HandGun(Game game, ShotPool shotPool) 
-        {
-            this.AmmoPool = shotPool;
+            this.pool = shotPool;
             this.WeaponName = "HandGun";
+            this.CooldownTime = cooldownTime;
         }
 
-        public override void Fire(Vector2 locationOfGunHolder, Vector2 target)
+        public override void RotationFire(Vector2 spawnLocation, float playerRotation)
         {
-            ammoPool.SpawnFromPool(locationOfGunHolder, target);
+            Vector2 target = new Vector2((float)Math.Cos(playerRotation), (float)Math.Sin(playerRotation));
+            pool.SpawnFromPool("Shots", spawnLocation, target);
         }
     }
 }

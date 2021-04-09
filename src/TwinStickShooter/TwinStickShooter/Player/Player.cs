@@ -14,7 +14,7 @@ namespace TwinStickShooter.Player
 {
     class Player : DrawableSprite
     {
-        float playerSpeed = 225;
+        float playerSpeed = 450;
 
         public IPlayerController Controller { get; protected set; }
 
