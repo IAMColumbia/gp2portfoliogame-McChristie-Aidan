@@ -14,15 +14,17 @@ namespace TwinStickShooter.Weapons
         int numberOfBullets = 10;
         float bulletOffset = .09f;
         float cooldownTime = 1000;
-  
+        string poolTag;
+
         Random random;
         PoolManager pool;
 
-        public WaveGun(Game game, PoolManager shotPool)
+        public WaveGun(Game game, PoolManager shotPool, string poolTag)
         {
             this.WeaponName = "ShotGun";
             this.pool = shotPool;
             this.CooldownTime = cooldownTime;
+            this.poolTag = poolTag;
             random = new Random();
         }
 
@@ -38,7 +40,7 @@ namespace TwinStickShooter.Weapons
             {
                 Vector2 target = new Vector2((float)Math.Cos(playerRotation+(bulletOffset*i)), (float)Math.Sin(playerRotation+(bulletOffset*i)));
 
-                pool.SpawnFromPool("Shots", spawnLocation, target);
+                pool.SpawnFromPool(poolTag, spawnLocation, target);
             }
         }
     }

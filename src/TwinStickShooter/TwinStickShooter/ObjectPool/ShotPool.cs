@@ -7,16 +7,7 @@ using TwinStickShooter.Projectiles;
 using Microsoft.Xna.Framework;
 using MonoGameLibrary.GameComponents;
 using MonoGameLibrary.Util;
-using TwinStickShooter.Projectiles;
 
 namespace TwinStickShooter.ObjectPool
 {
-    public class ShotPool : Pool
-    {
-        public ShotPool()
-        {
-            this.Obj = Shot;
-        }
-
-    }
 }

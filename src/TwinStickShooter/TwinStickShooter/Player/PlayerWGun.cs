@@ -16,6 +16,7 @@ namespace TwinStickShooter.Player
         bool onCooldown;
         float cooldownTime = 1000;
         int playerBulletsSize = 75;
+        string bulletPoolTag = "Shots";
 
 
 
@@ -28,9 +29,9 @@ namespace TwinStickShooter.Player
         {
 
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-            poolManager.InitializeShotPool("Shots", playerBulletsSize);
+            poolManager.InitializeShotPool(bulletPoolTag, playerBulletsSize);
 
-            gun = new WaveGun(game, poolManager.poolDictionary);
+            gun = new WaveGun(game, poolManager, bulletPoolTag);
 
             this.cooldownTime = gun.CooldownTime;
             onCooldown = false;
@@ -72,18 +73,18 @@ namespace TwinStickShooter.Player
         {
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
-                this.gun = new HandGun(this.Game, playerBullets);
+                this.gun = new HandGun(this.Game, poolManager, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new WaveGun(this.Game, playerBullets);
+                this.gun = new WaveGun(this.Game, poolManager, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
             {
-                this.gun = new AssultRifle(this.Game, playerBullets);
+                this.gun = new AssultRifle(this.Game, poolManager, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
         }

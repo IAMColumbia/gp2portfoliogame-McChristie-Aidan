@@ -27,27 +27,30 @@ namespace TwinStickShooter.ObjectPool
 
         public override void Update(GameTime gameTime)
         {
-            foreach (Shot s in shots)
+            foreach (Queue<DrawableSprite> queue in poolDictionary.Values)
             {
-                if (s.Enabled)
+                foreach (DrawableSprite s in queue)
                 {
-                    ++numberOfActiveElements;
-                    s.Update(gameTime); //Only update enabled shots
+                    if (s.Enabled)
+                    {
+                        s.Update(gameTime); //Only update enabled sprites
+                    }
                 }
             }
-
-            console.Log("Number of active bullets : ", numberOfActiveElements.ToString());
-            numberOfActiveElements = 0;
+            
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            foreach (Shot s in shots)
+            foreach (Queue<DrawableSprite> queue in poolDictionary.Values)
             {
-                if (s.Enabled)
+                foreach (DrawableSprite s in queue)
                 {
-                    s.Draw(gameTime); //Only update enabled shots
+                    if (s.Enabled)
+                    {
+                        s.Draw(gameTime); //Only update enabled shots
+                    }
                 }
             }
 
@@ -66,6 +69,8 @@ namespace TwinStickShooter.ObjectPool
             poolDictionary[tag].Enqueue(s);
         }
 
+        //technical debt i cant figure out how to instantiate the the queue without know ing exactly whats going it it first
+        //need to change this later
         public void InitializeShotPool(string name, int size)
         {
             Queue<DrawableSprite> shots = new Queue<DrawableSprite>();

@@ -36,11 +36,12 @@ namespace TwinStickShooter
             console = new GameConsole(this);
             this.Components.Add(console);
 
+            pool = new PoolManager(this);
+            this.Components.Add(pool);
+            this.Services.AddService(typeof(IPoolManager), pool);
+
             player = new PlayerWGun(this);
             this.Components.Add(player);
-
-            pool = new PoolManager(this);
-            this.
 
             em = new EnemyManager(this);
             this.Components.Add(em);
