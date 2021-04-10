@@ -10,29 +10,27 @@ namespace TwinStickShooter.Enemies
 {
     class EnemyManager : DrawableGameComponent
     {
-        EnemyPool enemyPool;
+        PoolManager poolManager;
         int enemyPoolSize = 50;
         bool onCooldown;
-        //technical debt;
-        float CooldownTime = 1500;
+        float CooldownTime = 1000;
+        string enemyPoolTag = "enemies";
         Random r;
 
         public EnemyManager(Game game) : base(game)
         {
+            poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
             r = new Random();
             onCooldown = false;
-            enemyPool = new EnemyPool(game, enemyPoolSize);
-            enemyPool.Initialize();
+            poolManager.InitializeEnemyPool(enemyPoolTag, enemyPoolSize);
         }
 
         public override void Update(GameTime gameTime)
         {
-
-            enemyPool.Update(gameTime);
             if (onCooldown == false)
             {
                 float randomSpawn = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
-                enemyPool.SpawnFromPool(new Vector2(randomSpawn,0) , new Vector2(0,1));
+                poolManager.SpawnFromPool(enemyPoolTag, new Vector2(randomSpawn,0) , new Vector2(0,1));
                 onCooldown = true;
             }
 
@@ -51,17 +49,16 @@ namespace TwinStickShooter.Enemies
             base.Update(gameTime);
         }
 
+        // not sure if this is needed
         public override void Draw(GameTime gameTime)
         {
-            enemyPool.Draw(gameTime);
             base.Draw(gameTime);
         }
 
+        //TODO
         private void CheckCollision()
         {
-            foreach (Enemy enemy in enemyPool.enemies)
-            {
-            }
+
         }
     }
 }

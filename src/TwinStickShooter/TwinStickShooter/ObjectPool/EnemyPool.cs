@@ -18,7 +18,6 @@ namespace TwinStickShooter.ObjectPool
 
         public EnemyPool(Game game, int poolSize) : base(game)
         {
-            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
             enemies = new Queue<Enemy>();
 
             for (int i = 0; i < poolSize; i++)

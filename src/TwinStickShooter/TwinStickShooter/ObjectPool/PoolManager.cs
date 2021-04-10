@@ -85,5 +85,20 @@ namespace TwinStickShooter.ObjectPool
 
             poolDictionary.Add(name, shots);
         }
+
+        public void InitializeEnemyPool(string name, int size)
+        {
+            Queue<DrawableSprite> enemies = new Queue<DrawableSprite>();
+
+            for (int i = 0; i < size; i++)
+            {
+                Enemies.Enemy e = new Enemies.Enemy(this.Game);
+                e.Initialize();
+                e.Enabled = false;
+                enemies.Enqueue(e);
+            }
+
+            poolDictionary.Add(name, enemies);
+        }
     }
 }

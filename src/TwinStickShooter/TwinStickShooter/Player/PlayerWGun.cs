@@ -47,6 +47,7 @@ namespace TwinStickShooter.Player
             base.Update(gameTime);
         }
 
+        //used for firing logic
         private void CheckForFire(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();

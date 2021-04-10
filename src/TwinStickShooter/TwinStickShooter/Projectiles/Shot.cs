@@ -31,9 +31,7 @@ namespace TwinStickShooter.Projectiles
             {
                 this.Enabled = false;
             }
-
-
-
+   
             base.Update(gameTime);
         }
     }
