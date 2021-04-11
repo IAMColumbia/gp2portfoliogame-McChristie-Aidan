@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using MonoGameLibrary.Util;
 using TwinStickShooter.Player;
 using TwinStickShooter.ObjectPool;
-using TwinStickShooter.Weapons;
 using TwinStickShooter.Enemies;
+using TwinStickShooter.Projectiles;
 
 namespace TwinStickShooter
 {
@@ -21,6 +21,7 @@ namespace TwinStickShooter
         Player.Player player;
 
         EnemyManager em;
+        ShotManager sm;
 
         public GameConsole console;
 
@@ -44,6 +45,9 @@ namespace TwinStickShooter
 
             em = new EnemyManager(this);
             this.Components.Add(em);
+
+            sm = new ShotManager(this);
+            this.Components.Add(sm);
         }
 
         /// <summary>

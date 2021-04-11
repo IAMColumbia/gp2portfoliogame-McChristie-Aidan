@@ -17,9 +17,8 @@ namespace TwinStickShooter.Weapons
         string poolTag;
 
         Random random;
-        PoolManager pool;
 
-        public WaveGun(Game game, PoolManager shotPool, string poolTag)
+        public WaveGun(Game game, Pool shotPool, string poolTag)
         {
             this.WeaponName = "ShotGun";
             this.pool = shotPool;
@@ -40,7 +39,7 @@ namespace TwinStickShooter.Weapons
             {
                 Vector2 target = new Vector2((float)Math.Cos(playerRotation+(bulletOffset*i)), (float)Math.Sin(playerRotation+(bulletOffset*i)));
 
-                pool.SpawnFromPool(poolTag, spawnLocation, target);
+                pool.SpawnFromPool(spawnLocation, target);
             }
         }
     }

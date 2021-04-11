@@ -4,22 +4,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MonoGameLibrary.Sprite;
+using Microsoft.Xna.Framework;
 
 namespace TwinStickShooter.ObjectPool
 {
-    public interface IPool
+    public class Pool : DrawableGameComponent
     {
-        DrawableSprite Obj { get; }
-    }
+        public Queue<DrawableSprite> objectPool;
 
-    public class Pool
-    {      
-        protected DrawableSprite obj;
-
-        protected DrawableSprite Obj
+        public Pool(Game game, Queue<DrawableSprite> pool) : base(game)
         {
-            get { return obj; }
-            set { obj = value; }
+            objectPool = pool;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            foreach (DrawableSprite sprite in objectPool)
+            {
+                sprite.Update(gameTime);
+            }
+
+            base.Update(gameTime);
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            foreach (DrawableSprite sprite in objectPool)
+            {
+                sprite.Draw(gameTime);
+            }
+
+            base.Draw(gameTime);
+        }
+
+        public void SpawnFromPool(Vector2 spawnLocation, Vector2 fireDirection)
+        {
+            DrawableSprite s = objectPool.Dequeue();
+
+            s.Location = spawnLocation;
+            s.Direction = fireDirection;
+            s.Direction.Normalize();
+            s.Enabled = true;
+
+            objectPool.Enqueue(s);
         }
     }
 }

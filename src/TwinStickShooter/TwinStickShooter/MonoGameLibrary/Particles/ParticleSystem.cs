@@ -157,8 +157,7 @@ namespace MonoGameLibrary.Particle
         public void Draw(SpriteBatch spriteBatch)
         {
             if (enabled)
-            {
-                
+            { 
                 for (int i = 0; i < this.particles.Length; i++)
                 {
                     if (this.particles[i].IsActive == true)

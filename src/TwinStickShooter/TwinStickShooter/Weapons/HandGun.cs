@@ -14,7 +14,7 @@ namespace TwinStickShooter.Weapons
         float cooldownTime = 250;
         string poolTag;
 
-        public HandGun(Game game, PoolManager shotPool, string poolTag) 
+        public HandGun(Game game, Pool shotPool, string poolTag) 
         {
             this.pool = shotPool;
             this.WeaponName = "HandGun";
@@ -25,7 +25,7 @@ namespace TwinStickShooter.Weapons
         public override void RotationFire(Vector2 spawnLocation, float playerRotation)
         {
             Vector2 target = new Vector2((float)Math.Cos(playerRotation), (float)Math.Sin(playerRotation));
-            pool.SpawnFromPool(poolTag, spawnLocation, target);
+            pool.SpawnFromPool(spawnLocation, target);
         }
     }
 }

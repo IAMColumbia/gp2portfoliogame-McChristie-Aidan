@@ -10,6 +10,6 @@ namespace TwinStickShooter.Weapons
 
     class RangedWeapon : Weapon
     {
-        protected PoolManager pool; 
+        protected Pool pool; 
     }
 }

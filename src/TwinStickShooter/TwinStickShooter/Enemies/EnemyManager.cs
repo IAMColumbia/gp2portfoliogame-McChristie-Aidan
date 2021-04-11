@@ -9,43 +9,34 @@ using TwinStickShooter.ObjectPool;
 namespace TwinStickShooter.Enemies
 {
     class EnemyManager : DrawableGameComponent
-    {
-        PoolManager poolManager;
+    {       
         int enemyPoolSize = 50;
         bool onCooldown;
-        float CooldownTime = 1000;
-        string enemyPoolTag = "enemies";
+        float CooldownTime = 500;
+        float currentCooldown;
+        string enemyPoolTag = "Enemies";
+
         Random r;
+        PoolManager poolManager;
+        
 
         public EnemyManager(Game game) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+            //TODO Initilize pool
+
             r = new Random();
+
             onCooldown = false;
-            poolManager.InitializeEnemyPool(enemyPoolTag, enemyPoolSize);
+            currentCooldown = CooldownTime;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (onCooldown == false)
-            {
-                float randomSpawn = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
-                poolManager.SpawnFromPool(enemyPoolTag, new Vector2(randomSpawn,0) , new Vector2(0,1));
-                onCooldown = true;
-            }
+            RandomSpawn(gameTime);
 
-            if (onCooldown)
-            {
-                CooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                if (CooldownTime <= 0f)
-                {
-                    onCooldown = false;
-                    CooldownTime = 1000;
-                }
-            }
-
-            Console.Write(CooldownTime);
+            CheckCollision();
+            
             base.Update(gameTime);
         }
 
@@ -55,10 +46,50 @@ namespace TwinStickShooter.Enemies
             base.Draw(gameTime);
         }
 
-        //TODO
         private void CheckCollision()
         {
+            foreach (Enemy enemy in poolManager.poolDictionary[enemyPoolTag].objectPool)
+            {
+                if (enemy.Enabled)
+                {
+                    //enemy and bullet collision
+                    foreach (var item in poolManager.poolDictionary["Shots"].objectPool)
+                    {
+                        if (item.Enabled)
+                        {
+                            if (enemy.Intersects(item))
+                            {
+                                if (enemy.PerPixelCollision(item))
+                                {
+                                    enemy.Enabled = false;
+                                    item.Enabled = false;
+                                }                     
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
+        private void RandomSpawn(GameTime gameTime)
+        {
+            if (onCooldown == false)
+            {
+                float randomSpawn = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
+                poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawn, 0), new Vector2(0, 1));
+                onCooldown = true;
+            }
+
+            if (onCooldown)
+            {
+                currentCooldown -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (currentCooldown <= 0f)
+                {
+                    onCooldown = false;
+                    currentCooldown = CooldownTime;
+                }
+            }
         }
     }
 }

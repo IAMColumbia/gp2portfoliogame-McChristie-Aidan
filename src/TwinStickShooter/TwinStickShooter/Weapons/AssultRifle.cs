@@ -16,7 +16,7 @@ namespace TwinStickShooter.Weapons
         string poolTag;
         Random r;
 
-        public AssultRifle(Game game, PoolManager shotPool, string poolTag)
+        public AssultRifle(Game game, Pool shotPool, string poolTag)
         {
             this.pool = shotPool;
             this.WeaponName = "Assult Rifle";
@@ -38,9 +38,9 @@ namespace TwinStickShooter.Weapons
                 offset = -(float)r.NextDouble();
             }
 
-            Vector2 target = new Vector2((float)Math.Cos(playerRotation+(offset* spreadModifier)), (float)Math.Sin(playerRotation+(offset* spreadModifier)));
+            Vector2 target = new Vector2((float)Math.Cos(playerRotation+(offset * spreadModifier)), (float)Math.Sin(playerRotation+(offset * spreadModifier)));
 
-            pool.SpawnFromPool(poolTag, spawnLocation, target);
+            pool.SpawnFromPool(spawnLocation, target);
         }
     }
 }

@@ -18,20 +18,19 @@ namespace TwinStickShooter.Player
         int playerBulletsSize = 75;
         string bulletPoolTag = "Shots";
 
-
-
         public Weapon gun;
 
         GameConsole console;
         PoolManager poolManager;
+        Pool shotPool;
 
         public PlayerWGun(Game game) : base(game)
         {
-
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-            poolManager.InitializeShotPool(bulletPoolTag, playerBulletsSize);
+            // TODO Initialize po
+            shotPool = poolManager.poolDictionary[bulletPoolTag];
 
-            gun = new WaveGun(game, poolManager, bulletPoolTag);
+            gun = new WaveGun(game, shotPool, bulletPoolTag);
 
             this.cooldownTime = gun.CooldownTime;
             onCooldown = false;
@@ -61,6 +60,7 @@ namespace TwinStickShooter.Player
             if (onCooldown)
             {
                 cooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                console.Log("Gun cooldown : ", cooldownTime.ToString());
 
                 if (cooldownTime <= 0f)
                 {
@@ -74,18 +74,18 @@ namespace TwinStickShooter.Player
         {
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
-                this.gun = new HandGun(this.Game, poolManager, bulletPoolTag);
+                this.gun = new HandGun(this.Game, shotPool, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new WaveGun(this.Game, poolManager, bulletPoolTag);
+                this.gun = new WaveGun(this.Game, shotPool, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
             {
-                this.gun = new AssultRifle(this.Game, poolManager, bulletPoolTag);
+                this.gun = new AssultRifle(this.Game, shotPool, bulletPoolTag);
                 this.cooldownTime = gun.CooldownTime;
             }
         }
