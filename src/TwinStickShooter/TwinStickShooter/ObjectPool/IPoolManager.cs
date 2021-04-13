@@ -8,5 +8,6 @@ namespace TwinStickShooter.ObjectPool
 {
     interface IPoolManager
     {
+        Dictionary<string, Pool> PoolDictionary { get; }
     }
 }

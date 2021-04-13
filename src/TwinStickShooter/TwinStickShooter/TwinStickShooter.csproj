@@ -47,6 +47,8 @@
     <Compile Include="ObjectPool\IPoolManager.cs" />
     <Compile Include="ObjectPool\Pool.cs" />
     <Compile Include="ObjectPool\PoolManager.cs" />
+    <Compile Include="Pickups\PickUp.cs" />
+    <Compile Include="Pickups\PickUpManager.cs" />
     <Compile Include="Player\Player.cs" />
     <Compile Include="Player\PlayerWGun.cs" />
     <Compile Include="Program.cs" />

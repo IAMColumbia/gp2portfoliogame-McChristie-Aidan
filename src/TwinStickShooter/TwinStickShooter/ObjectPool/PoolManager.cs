@@ -15,12 +15,16 @@ namespace TwinStickShooter.ObjectPool
         public Dictionary<string, Pool> poolDictionary;
         GameConsole console;
 
+        public Dictionary<string, Pool> PoolDictionary
+        {
+            get;
+        }
+
         public PoolManager(Game game) : base(game)
         {
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
             this.Game.Services.AddService(typeof(IPoolManager), this);
             poolDictionary = new Dictionary<string, Pool>();
-
         }
 
         public override void Update(GameTime gameTime)

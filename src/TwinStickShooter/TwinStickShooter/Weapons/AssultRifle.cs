@@ -12,7 +12,7 @@ namespace TwinStickShooter.Weapons
     {
         float RifleDamge = 2;
         float spreadModifier = .15f;
-        float cooldownTime = 100;
+        float cooldownTime = 150;
         string poolTag;
         Random r;
 

@@ -6,6 +6,7 @@ using TwinStickShooter.Player;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Enemies;
 using TwinStickShooter.Projectiles;
+using TwinStickShooter.Pickups;
 
 namespace TwinStickShooter
 {
@@ -22,6 +23,7 @@ namespace TwinStickShooter
 
         EnemyManager em;
         ShotManager sm;
+        PickUpManager pm;
 
         public GameConsole console;
 
@@ -39,6 +41,9 @@ namespace TwinStickShooter
 
             pool = new PoolManager(this);
             this.Components.Add(pool);
+
+            pm = new PickUpManager(this);
+            this.Components.Add(pm);
 
             player = new PlayerWGun(this);
             this.Components.Add(player);

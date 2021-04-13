@@ -5,16 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using TwinStickShooter.ObjectPool;
+using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Enemies
 {
     class EnemyManager : DrawableGameComponent
     {       
-        int enemyPoolSize = 50;
         bool onCooldown;
         float CooldownTime = 500;
         float currentCooldown;
         string enemyPoolTag = "Enemies";
+        int enemyPoolSize = 50;
 
         Random r;
         PoolManager poolManager;
@@ -23,7 +24,23 @@ namespace TwinStickShooter.Enemies
         public EnemyManager(Game game) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+
             //TODO Initilize pool
+
+            //technical debt this should be in the pool class
+            Queue<DrawableSprite> enemies = new Queue<DrawableSprite>();
+            for (int i = 0; i < enemyPoolSize; i++)
+            {
+                Enemy e = new Enemy(game);
+                e.Initialize();
+                e.Enabled = false;
+                e.Visible = false;
+                enemies.Enqueue(e);
+            }
+
+            Pool pool = new Pool(game, enemies);
+            poolManager.poolDictionary.Add(enemyPoolTag, pool);
+
 
             r = new Random();
 
@@ -63,6 +80,7 @@ namespace TwinStickShooter.Enemies
                                 {
                                     enemy.Enabled = false;
                                     item.Enabled = false;
+                                    poolManager.poolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
                                 }                     
                             }
                         }

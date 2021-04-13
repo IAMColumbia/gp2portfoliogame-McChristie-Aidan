@@ -21,7 +21,10 @@ namespace TwinStickShooter.ObjectPool
         {
             foreach (DrawableSprite sprite in objectPool)
             {
-                sprite.Update(gameTime);
+                if (sprite.Enabled)
+                {
+                    sprite.Update(gameTime);
+                }
             }
 
             base.Update(gameTime);
@@ -31,7 +34,10 @@ namespace TwinStickShooter.ObjectPool
         {
             foreach (DrawableSprite sprite in objectPool)
             {
-                sprite.Draw(gameTime);
+                if (sprite.Enabled)
+                {
+                    sprite.Draw(gameTime);
+                }
             }
 
             base.Draw(gameTime);

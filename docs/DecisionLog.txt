@@ -1,5 +1,3 @@
-4/9/2021
 - Weapons will have cooldown numbers but the player will just set their cooldown timer to whatever the guns value is when they pick it up.
 doing it this way allows me to modify the cooldown for each individual player if I want too.
 so maybe a player grabs a power up that lets they fire twice as fast for example.
--
