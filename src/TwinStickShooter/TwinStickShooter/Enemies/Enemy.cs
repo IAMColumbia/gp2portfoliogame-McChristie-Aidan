@@ -13,7 +13,7 @@ namespace TwinStickShooter.Enemies
     {
         public Enemy(Game game) : base(game)
         {
-            this.Speed = 200;
+            this.Speed = 150;
             this.Direction = new Vector2(0, 1);
         }
 
@@ -27,10 +27,10 @@ namespace TwinStickShooter.Enemies
         {
             this.Location += this.Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
 
-            if (this.IsOffScreen())
-            {
-                this.Enabled = false;
-            }
+            //if (this.IsOffScreen())
+            //{
+            //    this.Enabled = false;
+            //}
 
             base.Update(gameTime);
         }

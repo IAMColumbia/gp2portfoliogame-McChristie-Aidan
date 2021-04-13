@@ -16,16 +16,17 @@ namespace TwinStickShooter.Enemies
         float currentCooldown;
         string enemyPoolTag = "Enemies";
         int enemyPoolSize = 50;
+        public int WaveNumber;
+        public int numOfEnemiesToSpawn = 5;
+        public int numOfEnemiesKilled = 10;
+        float timeBetweenRounds = 2000;
 
         Random r;
-        PoolManager poolManager;
-        
+        PoolManager poolManager;      
 
         public EnemyManager(Game game) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-
-            //TODO Initilize pool
 
             //technical debt this should be in the pool class
             Queue<DrawableSprite> enemies = new Queue<DrawableSprite>();
@@ -50,7 +51,24 @@ namespace TwinStickShooter.Enemies
 
         public override void Update(GameTime gameTime)
         {
-            RandomSpawn(gameTime);
+            if (numOfEnemiesKilled >= numOfEnemiesToSpawn)
+            {
+                if (currentCooldown < timeBetweenRounds)
+                {
+                    currentCooldown += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+                if (currentCooldown > timeBetweenRounds)
+                {
+                    WaveNumber++;
+                    numOfEnemiesToSpawn += 3;
+                    numOfEnemiesKilled = 0;
+                    for (int i = 0; i < numOfEnemiesToSpawn; i++)
+                    {
+                        RandomSpawn();
+                    }
+                    currentCooldown = 0;
+                }               
+            }
 
             CheckCollision();
             
@@ -80,6 +98,7 @@ namespace TwinStickShooter.Enemies
                                 {
                                     enemy.Enabled = false;
                                     item.Enabled = false;
+                                    numOfEnemiesKilled++;
                                     poolManager.poolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
                                 }                     
                             }
@@ -89,12 +108,12 @@ namespace TwinStickShooter.Enemies
             }
         }
 
-        private void RandomSpawn(GameTime gameTime)
+        private void RepeatedRandomSpawn(GameTime gameTime)
         {
             if (onCooldown == false)
             {
-                float randomSpawn = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
-                poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawn, 0), new Vector2(0, 1));
+                float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
+                poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, 0), new Vector2(0, 1));
                 onCooldown = true;
             }
 
@@ -108,6 +127,13 @@ namespace TwinStickShooter.Enemies
                     currentCooldown = CooldownTime;
                 }
             }
+        }
+
+        private void RandomSpawn()
+        {
+            float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
+            float randomSpawnY = (float)r.Next(-300, 0);
+            poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 1));
         }
     }
 }

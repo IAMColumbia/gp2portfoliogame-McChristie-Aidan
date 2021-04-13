@@ -13,6 +13,7 @@ namespace TwinStickShooter
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
+    /// 
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -32,9 +33,9 @@ namespace TwinStickShooter
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferWidth = 1000;  // set this value to the desired width of your window
-            graphics.PreferredBackBufferHeight = 700;   // set this value to the desired height of your window
-            graphics.ApplyChanges();      
+            graphics.PreferredBackBufferWidth = 1000; 
+            graphics.PreferredBackBufferHeight = 700;   
+            graphics.ApplyChanges();
 
             console = new GameConsole(this);
             this.Components.Add(console);
@@ -65,6 +66,7 @@ namespace TwinStickShooter
         {
             // TODO: Add your initialization logic here
 
+            //IsMouseVisible = false;
             base.Initialize();
         }
 
@@ -98,15 +100,9 @@ namespace TwinStickShooter
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-
-            MouseState mouseState = Mouse.GetState();
-
-            console.Log("left mouse button: ", mouseState.LeftButton.ToString());
-            console.Log("graphics device manager", this.graphics.ToString());
-            console.Log("player rotate : ", player.Rotate.ToString());
-
-            // TODO: Add your update logic here
+            console.Log("Wave Number : ", em.WaveNumber.ToString());
+            console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
+            console.Log("Num of enemies killed : ", em.numOfEnemiesKilled.ToString());
 
             base.Update(gameTime);
         }
