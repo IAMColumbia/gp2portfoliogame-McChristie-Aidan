@@ -20,7 +20,7 @@ namespace TwinStickShooter.Player
         float playerCooldownModifier = 0;
         int playerBulletsSize = 75;
         string bulletPoolTag = "Shots";
-        //technical debt the player shouldn't have this
+        //technical debt the player shouldn't use this
         int shotPoolSize = 100;
 
         public Weapon gun;
@@ -32,7 +32,7 @@ namespace TwinStickShooter.Player
         public PlayerWGun(Game game) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-            // TODO Initialize pool
+
             //technical debt this should go into the shot manager but i need to figure out how to make it work for any class.
             Queue<DrawableSprite> shots = new Queue<DrawableSprite>();
             for (int i = 0; i < shotPoolSize; i++)
@@ -47,8 +47,8 @@ namespace TwinStickShooter.Player
             Pool pool = new Pool(game, shots);
 
 
-            poolManager.poolDictionary.Add(bulletPoolTag , pool);
-            shotPool = poolManager.poolDictionary[bulletPoolTag];
+            poolManager.PoolDictionary.Add(bulletPoolTag , pool);
+            shotPool = poolManager.PoolDictionary[bulletPoolTag];
 
             gun = new WaveGun(game, shotPool, bulletPoolTag);
 
@@ -60,11 +60,16 @@ namespace TwinStickShooter.Player
 
         public override void Update(GameTime gameTime)
         {
+            //has the player fired
             CheckForFire(gameTime);
+            //have we swapped guns
             GunSwap();
+            //have we hit something
             CheckCollision();
+            //useful info
             console.Log("player current gun : ", this.gun.WeaponName);
             console.Log("player cooldown: ", cooldownTime.ToString());
+
             base.Update(gameTime);
         }
 
@@ -87,6 +92,7 @@ namespace TwinStickShooter.Player
                 if (cooldownTime <= 0f)
                 {
                     onCooldown = false;
+                    //reduces the cooldown based on the cooldown modifier
                     this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
                 }
             }
@@ -113,10 +119,11 @@ namespace TwinStickShooter.Player
             }
         }
 
+        //checks for when the player hits something
         void CheckCollision()
         {
-            //
-            foreach (Pickups.PickUp pickUp in poolManager.poolDictionary["PickUps"].objectPool)
+            //player and pick up collision
+            foreach (Pickups.PickUp pickUp in poolManager.PoolDictionary["PickUps"].objectPool)
             {
                 if (pickUp.Enabled)
                 {

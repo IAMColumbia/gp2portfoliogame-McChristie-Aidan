@@ -26,11 +26,11 @@ namespace TwinStickShooter.Projectiles
 
         private void CheckCollision()
         {
-            foreach (Shot shot in poolManager.poolDictionary["Shots"].objectPool)
+            foreach (Shot shot in poolManager.PoolDictionary["Shots"].objectPool)
             {
                 if (shot.Enabled)
                 {
-                    foreach (var item in poolManager.poolDictionary["Enemies"].objectPool)
+                    foreach (var item in poolManager.PoolDictionary["Enemies"].objectPool)
                     {
           
                     }

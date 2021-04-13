@@ -15,20 +15,21 @@ namespace TwinStickShooter.Enemies
         float CooldownTime = 500;
         float currentCooldown;
         string enemyPoolTag = "Enemies";
-        int enemyPoolSize = 50;
+        int enemyPoolSize = 100;
         public int WaveNumber;
         public int numOfEnemiesToSpawn = 5;
         public int numOfEnemiesKilled = 10;
         float timeBetweenRounds = 2000;
 
         Random r;
-        PoolManager poolManager;      
+        PoolManager poolManager;
+        Player.Player player;
 
-        public EnemyManager(Game game) : base(game)
+        public EnemyManager(Game game, Player.Player _player) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
 
-            //technical debt this should be in the pool class
+            //technical debt this should be in the pool class 
             Queue<DrawableSprite> enemies = new Queue<DrawableSprite>();
             for (int i = 0; i < enemyPoolSize; i++)
             {
@@ -40,10 +41,10 @@ namespace TwinStickShooter.Enemies
             }
 
             Pool pool = new Pool(game, enemies);
-            poolManager.poolDictionary.Add(enemyPoolTag, pool);
-
+            poolManager.PoolDictionary.Add(enemyPoolTag, pool);
 
             r = new Random();
+            player = _player;
 
             onCooldown = false;
             currentCooldown = CooldownTime;
@@ -53,15 +54,27 @@ namespace TwinStickShooter.Enemies
         {
             if (numOfEnemiesKilled >= numOfEnemiesToSpawn)
             {
+                //makes sure we done spawn enemies if we are on cooldown
                 if (currentCooldown < timeBetweenRounds)
                 {
                     currentCooldown += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
+
+                //if we have waited for the cooldown time between rounds
                 if (currentCooldown > timeBetweenRounds)
                 {
                     WaveNumber++;
                     numOfEnemiesToSpawn += 3;
+
+                    //makes sure we dont spawn more enemies than we have
+                    if (numOfEnemiesToSpawn > enemyPoolSize)
+                    {
+                        numOfEnemiesToSpawn = enemyPoolSize;
+                    }
+
                     numOfEnemiesKilled = 0;
+
+                    //spawns an enemy for the num of enenies we need this round
                     for (int i = 0; i < numOfEnemiesToSpawn; i++)
                     {
                         RandomSpawn();
@@ -70,6 +83,17 @@ namespace TwinStickShooter.Enemies
                 }               
             }
 
+            //makes all of our enemies move towards the player
+            foreach ( Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
+            {
+                if (enemy.Enabled)
+                {
+                    enemy.Direction = player.Location - enemy.Location;
+                    enemy.Direction.Normalize();
+                }
+            }
+
+            //checks to see if our enemies hit anything
             CheckCollision();
             
             base.Update(gameTime);
@@ -83,12 +107,12 @@ namespace TwinStickShooter.Enemies
 
         private void CheckCollision()
         {
-            foreach (Enemy enemy in poolManager.poolDictionary[enemyPoolTag].objectPool)
+            foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
             {
                 if (enemy.Enabled)
                 {
                     //enemy and bullet collision
-                    foreach (var item in poolManager.poolDictionary["Shots"].objectPool)
+                    foreach (var item in poolManager.PoolDictionary["Shots"].objectPool)
                     {
                         if (item.Enabled)
                         {
@@ -99,8 +123,21 @@ namespace TwinStickShooter.Enemies
                                     enemy.Enabled = false;
                                     item.Enabled = false;
                                     numOfEnemiesKilled++;
-                                    poolManager.poolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                    poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
                                 }                     
+                            }
+                        }
+                    }
+
+                    //enemy and player collision
+                    if (enemy.Enabled)
+                    {
+                        if (enemy.Intersects(player))
+                        {
+                            if (enemy.PerPixelCollision(player))
+                            {
+                                enemy.Enabled = false;
+                                numOfEnemiesKilled++;
                             }
                         }
                     }
@@ -108,12 +145,13 @@ namespace TwinStickShooter.Enemies
             }
         }
 
+        //used for nonstop spawning
         private void RepeatedRandomSpawn(GameTime gameTime)
         {
             if (onCooldown == false)
             {
                 float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
-                poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, 0), new Vector2(0, 1));
+                poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, 0), new Vector2(0, 1));
                 onCooldown = true;
             }
 
@@ -129,11 +167,12 @@ namespace TwinStickShooter.Enemies
             }
         }
 
+        //used to spawn one by one
         private void RandomSpawn()
         {
             float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
             float randomSpawnY = (float)r.Next(-300, 0);
-            poolManager.poolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 1));
+            poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 1));
         }
     }
 }

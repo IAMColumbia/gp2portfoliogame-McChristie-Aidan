@@ -31,7 +31,7 @@ namespace TwinStickShooter.Pickups
             }
 
             Pool pool = new Pool(game, pickUps);
-            poolManager.poolDictionary.Add(pickUpPoolTag, pool);
+            poolManager.PoolDictionary.Add(pickUpPoolTag, pool);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TwinStickShooter
             player = new PlayerWGun(this);
             this.Components.Add(player);
 
-            em = new EnemyManager(this);
+            em = new EnemyManager(this, player);
             this.Components.Add(em);
 
             sm = new ShotManager(this);

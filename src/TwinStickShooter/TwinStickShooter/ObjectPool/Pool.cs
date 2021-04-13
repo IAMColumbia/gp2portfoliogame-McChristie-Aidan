@@ -43,6 +43,7 @@ namespace TwinStickShooter.ObjectPool
             base.Draw(gameTime);
         }
 
+        //enables the first item in that queue at the target location moving the target direction
         public void SpawnFromPool(Vector2 spawnLocation, Vector2 fireDirection)
         {
             DrawableSprite s = objectPool.Dequeue();
