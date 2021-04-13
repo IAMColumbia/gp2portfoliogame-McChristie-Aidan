@@ -1,3 +1,18 @@
-- Weapons will have cooldown numbers but the player will just set their cooldown timer to whatever the guns value is when they pick it up.
-doing it this way allows me to modify the cooldown for each individual player if I want too.
-so maybe a player grabs a power up that lets they fire twice as fast for example.
+# LIMITATIONS
+- The game is limited to one player at a time becuase the enemy manager takes in a player reference so the enemies can move towards the player location.
+- The player is limited to one gun at a time.
+- The number of bullets that are able to be active at one time are limited to the size of the pool they come from.
+- The number of spawnable enemies is limited to the size of my enemy pools. this means I could potentially run out of enemies that i could spawn.
+# PATTERNS
+- The use of the object pool pattern has led to the entire project leaning on the pool manager. Bullets, Enemies, and pickups etc.
+- Strategy pattern has made it very easy to switch between guns and program new ones.
+# DEPENDENCIES
+- Ranged weapons are dependent on the pool manager to hold its pool.
+- The Enemy manager is dependent on the pool manager to hold its pool.
+- The Pickup manager is dependent on the pool manager to hold its pool.
+- The Enemy manager is dependdent on the player so it can tell the enemies where to go.
+# OTHER GOTCHAS
+
+
+
+
