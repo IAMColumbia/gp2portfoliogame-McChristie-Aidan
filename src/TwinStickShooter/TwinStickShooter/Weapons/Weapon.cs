@@ -12,26 +12,26 @@ namespace TwinStickShooter.Weapons
     {
         string WeaponName { get; }
         float Damage { get; }
-        float FireRate { get; }
+        float CooldownTime { get; }
 
         void Fire(Vector2 spawnLocation, Vector2 target);
-    }
-
-    public interface IRangedWeapon
-    {
-        ShotPool AmmoPool { get; }
+        void RotationFire(Vector2 spawnLocation, float playerRotation);
     }
 
     class Weapon : IWeapon
     {
         public string WeaponName { get; protected set; }
-        public float Damage { get; private set; }
-        public float FireRate { get; private set; }
+        public float Damage { get; protected set; }
+        public float CooldownTime { get; protected set; }
 
         public virtual void Fire(Vector2 spawnLocation, Vector2 target)
         {
             //TODO add Shot logic
         }
 
+        public virtual void RotationFire(Vector2 spawnLocation, float playerRotation)
+        {
+
+        }
     }
 }

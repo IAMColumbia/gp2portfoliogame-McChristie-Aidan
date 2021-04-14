@@ -25,12 +25,11 @@ namespace TwinStickShooter.Enemies
 
         public override void Update(GameTime gameTime)
         {
-            this.Location += this.Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
-
-            if (this.IsOffScreen())
-            {
-                this.Enabled = false;
-            }
+            this.Location += Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            //if (this.IsOffScreen())
+            //{
+            //    this.Enabled = false;
+            //}
 
             base.Update(gameTime);
         }

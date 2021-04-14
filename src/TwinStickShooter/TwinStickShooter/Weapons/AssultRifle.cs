@@ -8,27 +8,39 @@ using TwinStickShooter.ObjectPool;
 
 namespace TwinStickShooter.Weapons
 {
-    class AssultRifle : Weapon, IRangedWeapon
+    class AssultRifle : RangedWeapon
     {
         float RifleDamge = 2;
-        ShotPool ammoPool;
+        float spreadModifier = .15f;
+        float cooldownTime = 150;
+        string poolTag;
+        Random r;
 
-        public ShotPool AmmoPool
+        public AssultRifle(Game game, Pool shotPool, string poolTag)
         {
-            get { return ammoPool; }
-            private set { ammoPool = value; }
-        }
-
-        public AssultRifle(Game game, ShotPool shotPool)
-        {
-            this.AmmoPool = shotPool;
+            this.pool = shotPool;
             this.WeaponName = "Assult Rifle";
+            this.CooldownTime = cooldownTime;
+            this.poolTag = poolTag;
+            r = new Random();
         }
 
-        public override void Fire(Vector2 locationOfGunHolder, Vector2 target)
+        public override void RotationFire(Vector2 spawnLocation, float playerRotation)
         {
-            ammoPool.SpawnFromPool(locationOfGunHolder, target);
-        }
+            float offset;
 
+            if (r.Next(0,2) == 1)
+            {
+                offset = (float)r.NextDouble();
+            }
+            else
+            {
+                offset = -(float)r.NextDouble();
+            }
+
+            Vector2 target = new Vector2((float)Math.Cos(playerRotation+(offset * spreadModifier)), (float)Math.Sin(playerRotation+(offset * spreadModifier)));
+
+            pool.SpawnFromPool(spawnLocation, target);
+        }
     }
 }

@@ -7,65 +7,139 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TwinStickShooter.Weapons;
 using TwinStickShooter.ObjectPool;
+using TwinStickShooter.Projectiles;
 using MonoGameLibrary.Util;
+using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Player
 {
     class PlayerWGun : Player
     {
-        public Weapon gun;
-        public bool hasFired;
-        ShotPool playerBullets;
+        bool onCooldown;
+        float cooldownTime = 1000;
+        float playerCooldownModifier = 0;
         int playerBulletsSize = 75;
+        string bulletPoolTag = "Shots";
+        //technical debt the player shouldn't use this
+        int shotPoolSize = 100;
+
+        public Weapon gun;
 
         GameConsole console;
+        PoolManager poolManager;
+        Pool shotPool;
 
         public PlayerWGun(Game game) : base(game)
         {
-            hasFired = false;
-            playerBullets = new ShotPool(game, playerBulletsSize);
-            game.Components.Add(playerBullets);
-            gun = new ShotGun(game, playerBullets);
+            poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+
+            //technical debt this should go into the shot manager but i need to figure out how to make it work for any class.
+            Queue<DrawableSprite> shots = new Queue<DrawableSprite>();
+            for (int i = 0; i < shotPoolSize; i++)
+            {
+                Shot s = new Shot(game);
+                s.Initialize();
+                s.Enabled = false;
+                s.Visible = false;
+                shots.Enqueue(s);
+            }
+
+            Pool pool = new Pool(game, shots);
+
+
+            poolManager.PoolDictionary.Add(bulletPoolTag , pool);
+            shotPool = poolManager.PoolDictionary[bulletPoolTag];
+
+            gun = new WaveGun(game, shotPool, bulletPoolTag);
+
+            this.cooldownTime = gun.CooldownTime;
+            onCooldown = false;
+
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
         }
 
         public override void Update(GameTime gameTime)
         {
-            CheckForFire();
+            //has the player fired
+            CheckForFire(gameTime);
+            //have we swapped guns
             GunSwap();
+            //have we hit something
+            CheckCollision();
+            //useful info
             console.Log("player current gun : ", this.gun.WeaponName);
+            console.Log("player cooldown: ", cooldownTime.ToString());
+
             base.Update(gameTime);
         }
 
-        private void CheckForFire()
+        //used for firing logic
+        private void CheckForFire(GameTime gameTime)
         {
             MouseState mouseState = Mouse.GetState();
 
-            Vector2 target = mouseState.Position.ToVector2() - this.Location;
-            target.Normalize();
-
-            if (mouseState.LeftButton == ButtonState.Pressed && hasFired == false)
+            if (mouseState.LeftButton == ButtonState.Pressed && onCooldown == false)
             {
-                hasFired = true;
-                gun.Fire(this.Location, target);
+                onCooldown = true;
+                gun.RotationFire(this.Location, this.Rotate);
             }
 
-            if (mouseState.LeftButton == ButtonState.Released)
+            if (onCooldown)
             {
-                hasFired = false;
+                cooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                console.Log("Gun cooldown : ", cooldownTime.ToString());
+          
+                if (cooldownTime <= 0f)
+                {
+                    onCooldown = false;
+                    //reduces the cooldown based on the cooldown modifier
+                    this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
+                }
             }
         }
 
+        //tool for swaping guns for testing
         void GunSwap()
         {
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
-                this.gun = new HandGun(this.Game, playerBullets);
+                this.gun = new HandGun(this.Game, shotPool, bulletPoolTag);
+                this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new ShotGun(this.Game, playerBullets);
+                this.gun = new WaveGun(this.Game, shotPool, bulletPoolTag);
+                this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
+            }
+            if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
+            {
+                this.gun = new AssultRifle(this.Game, shotPool, bulletPoolTag);
+                this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
+            }
+        }
+
+        //checks for when the player hits something
+        void CheckCollision()
+        {
+            //player and pick up collision
+            foreach (Pickups.PickUp pickUp in poolManager.PoolDictionary["PickUps"].objectPool)
+            {
+                if (pickUp.Enabled)
+                {
+                    if (pickUp.Intersects(this))
+                    {
+                        if (pickUp.PerPixelCollision(this))
+                        {
+                            pickUp.Enabled = false;
+                            playerCooldownModifier += pickUp.pickUpValue;
+                            if (!onCooldown)
+                            {
+                                this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
+                            }
+                        }
+                    }
+                }
             }
         }
     }
