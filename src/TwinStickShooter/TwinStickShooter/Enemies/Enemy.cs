@@ -11,6 +11,13 @@ namespace TwinStickShooter.Enemies
 {
     class Enemy : DrawableSprite
     {
+        public Vector2 velocity;
+        public Vector2 desired;
+        Vector2 acceleration;
+        public Vector2 target;
+
+
+
         public Enemy(Game game) : base(game)
         {
             this.Speed = 200;
@@ -25,13 +32,37 @@ namespace TwinStickShooter.Enemies
 
         public override void Update(GameTime gameTime)
         {
-            this.Location += Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            velocity += acceleration;
+            velocity.Normalize();
+            velocity *= (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            this.Location += velocity;
+
+            acceleration *= 0;
+
+            //this.Location += Direction * 
             //if (this.IsOffScreen())
             //{
             //    this.Enabled = false;
             //}
 
             base.Update(gameTime);
+        }
+
+        public void AddForce(Vector2 force)
+        {
+            this.acceleration += force;
+        }
+
+        public void Seek(Vector2 target, GameTime gameTime)
+        {
+            desired = Vector2.Subtract(target, this.Location);
+            desired.Normalize();
+            desired *= (Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+
+            var steer = Vector2.Subtract(desired, velocity);
+            //limit
+
+            AddForce(steer);
         }
     }
 }
