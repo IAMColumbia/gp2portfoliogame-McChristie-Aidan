@@ -16,11 +16,9 @@ namespace TwinStickShooter.Enemies
         Vector2 acceleration;
         public Vector2 target;
 
-
-
         public Enemy(Game game) : base(game)
         {
-            this.Speed = 200;
+            this.Speed = 250;
             this.Direction = new Vector2(0, 1);
         }
 

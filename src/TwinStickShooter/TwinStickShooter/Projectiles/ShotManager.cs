@@ -19,7 +19,7 @@ namespace TwinStickShooter.Projectiles
 
         public override void Update(GameTime gameTime)
         {
-            //CheckCollision();
+            CheckCollision();
 
             base.Update(gameTime);
         }
@@ -32,7 +32,7 @@ namespace TwinStickShooter.Projectiles
                 {
                     foreach (var item in poolManager.PoolDictionary["Enemies"].objectPool)
                     {
-          
+                        
                     }
                 }
             }

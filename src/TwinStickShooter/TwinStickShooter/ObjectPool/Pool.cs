@@ -10,11 +10,12 @@ namespace TwinStickShooter.ObjectPool
 {
     public class Pool : DrawableGameComponent
     {
-        public Queue<DrawableSprite> objectPool;
+        public Queue<DrawableSprite> objectPool, objectsToEnable;
 
         public Pool(Game game, Queue<DrawableSprite> pool) : base(game)
         {
             objectPool = pool;
+            objectsToEnable = new Queue<DrawableSprite>();
         }
 
         public override void Update(GameTime gameTime)
@@ -25,13 +26,19 @@ namespace TwinStickShooter.ObjectPool
                 {
                     sprite.Update(gameTime);
                 }
-            }
+            }           
 
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
+            for (int i = 0; i < objectsToEnable.Count; i++)
+            {
+                var s = objectsToEnable.Dequeue();
+                s.Update(gameTime);
+            }
+
             foreach (DrawableSprite sprite in objectPool)
             {
                 if (sprite.Enabled)
@@ -52,6 +59,8 @@ namespace TwinStickShooter.ObjectPool
             s.Direction = fireDirection;
             s.Direction.Normalize();
             s.Enabled = true;
+
+            objectsToEnable.Enqueue(s);
 
             objectPool.Enqueue(s);
         }

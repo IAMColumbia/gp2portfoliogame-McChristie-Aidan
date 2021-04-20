@@ -36,7 +36,6 @@ namespace TwinStickShooter.Enemies
                 Enemy e = new Enemy(game);
                 e.Initialize();
                 e.Enabled = false;
-                e.Visible = false;
                 enemies.Enqueue(e);
             }
 
@@ -95,7 +94,7 @@ namespace TwinStickShooter.Enemies
             }
 
             //checks to see if our enemies hit anything
-            CheckCollision();
+            CheckCollision(gameTime);
             
             base.Update(gameTime);
         }
@@ -106,7 +105,7 @@ namespace TwinStickShooter.Enemies
             base.Draw(gameTime);
         }
 
-        private void CheckCollision()
+        private void CheckCollision(GameTime gameTime)
         {
             foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
             {
@@ -121,10 +120,14 @@ namespace TwinStickShooter.Enemies
                             {
                                 if (enemy.PerPixelCollision(item))
                                 {
+                                    poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                    enemy.Location = new Vector2(-100, -100);
+                                    enemy.Update(gameTime);
+                                    item.Location = new Vector2(-50, -50);
+                                    item.Update(gameTime);
                                     enemy.Enabled = false;
                                     item.Enabled = false;
-                                    numOfEnemiesKilled++;
-                                    poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                    numOfEnemiesKilled++;                                 
                                 }                     
                             }
                         }
@@ -136,7 +139,7 @@ namespace TwinStickShooter.Enemies
                         if (enemy.Intersects(player))
                         {
                             if (enemy.PerPixelCollision(player))
-                            {
+                            { 
                                 enemy.Enabled = false;
                                 numOfEnemiesKilled++;
                             }

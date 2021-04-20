@@ -40,7 +40,6 @@ namespace TwinStickShooter.Player
                 Shot s = new Shot(game);
                 s.Initialize();
                 s.Enabled = false;
-                s.Visible = false;
                 shots.Enqueue(s);
             }
 
@@ -131,6 +130,7 @@ namespace TwinStickShooter.Player
                     {
                         if (pickUp.PerPixelCollision(this))
                         {
+                            //pickUp.Location = new Vector2(-100, -50);
                             pickUp.Enabled = false;
                             playerCooldownModifier += pickUp.pickUpValue;
                             if (!onCooldown)

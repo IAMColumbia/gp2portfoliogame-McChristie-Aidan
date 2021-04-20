@@ -16,7 +16,7 @@ namespace TwinStickShooter.Pickups
 
         public PickUp(Game game) : base(game)
         {
-            this.pickUpValue = 1f;
+            this.pickUpValue = .5f;
         }
 
         protected override void LoadContent()
