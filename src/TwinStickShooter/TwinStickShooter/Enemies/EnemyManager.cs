@@ -67,6 +67,7 @@ namespace TwinStickShooter.Enemies
                     {
                         if (other.Enabled)
                         {                            
+                            //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
                             var dist = Vector2.Distance(enemy.Location, other.Location);
                             var sum = new Vector2();
                             int count = 0;
@@ -82,9 +83,9 @@ namespace TwinStickShooter.Enemies
                             {
                                 sum = Vector2.Divide(sum, count);
                                 sum.Normalize();
-                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000)/10;
                                 var steer = Vector2.Subtract(sum, enemy.velocity);
-                                //limit
+
                                 enemy.AddForce(steer);
                             }                          
                         }
@@ -121,10 +122,13 @@ namespace TwinStickShooter.Enemies
                                 if (enemy.PerPixelCollision(item))
                                 {
                                     poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+
                                     enemy.Location = new Vector2(-100, -100);
                                     enemy.Update(gameTime);
+
                                     item.Location = new Vector2(-50, -50);
                                     item.Update(gameTime);
+
                                     enemy.Enabled = false;
                                     item.Enabled = false;
                                     numOfEnemiesKilled++;                                 
@@ -139,7 +143,10 @@ namespace TwinStickShooter.Enemies
                         if (enemy.Intersects(player))
                         {
                             if (enemy.PerPixelCollision(player))
-                            { 
+                            {
+                                enemy.Location = new Vector2(-100, -100);
+                                enemy.Update(gameTime);
+
                                 enemy.Enabled = false;
                                 numOfEnemiesKilled++;
                             }
@@ -154,8 +161,7 @@ namespace TwinStickShooter.Enemies
         {
             if (onCooldown == false)
             {
-                float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
-                poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, 0), new Vector2(0, 1));
+                RandomSpawn();
 
                 poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(100, 99), new Vector2(0, 0));
                 poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(300, 100), new Vector2(0, 0));

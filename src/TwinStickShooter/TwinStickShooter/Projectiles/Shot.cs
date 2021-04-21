@@ -11,6 +11,7 @@ namespace TwinStickShooter.Projectiles
 {
     public class Shot : DrawableSprite
     {
+        float slowdownRate = 0f;
 
         public Shot(Game game) : base(game)
         {
@@ -26,6 +27,7 @@ namespace TwinStickShooter.Projectiles
         public override void Update(GameTime gameTime)
         {
             this.Location += this.Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+            this.Speed -= slowdownRate * gameTime.ElapsedGameTime.Milliseconds / 1000; 
 
             if (this.IsOffScreen())
             {
