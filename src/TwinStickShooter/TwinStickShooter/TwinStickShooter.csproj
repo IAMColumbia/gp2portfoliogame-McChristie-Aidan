@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Enemies\Enemy.cs" />
     <Compile Include="Enemies\EnemyManager.cs" />
-    <Compile Include="Enemies\RangedEnemy.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="ObjectPool\IPoolManager.cs" />
     <Compile Include="ObjectPool\Pool.cs" />

@@ -10,19 +10,23 @@ using MonoGameLibrary.Sprite;
 namespace TwinStickShooter.Enemies
 {
     class EnemyManager : DrawableGameComponent
-    {       
+    {
+        //wave spawn variables
         bool onCooldown;
         float CooldownTime = 500;
         float currentCooldown;
-        string enemyPoolTag = "Enemies";
-        int enemyPoolSize = 100;
+        float timeBetweenRounds = 2000;
         public int WaveNumber;
         public int numOfEnemiesToSpawn = 5;
         public int numOfEnemiesKilled = 10;
-        float timeBetweenRounds = 2000;
-
         Random r;
+
+        //enemy pool variables
+        string enemyPoolTag = "Enemies";
+        int enemyPoolSize = 100;
         PoolManager poolManager;
+
+        //the player of our game
         Player.Player player;
 
         public EnemyManager(Game game, Player.Player _player) : base(game)
@@ -47,8 +51,6 @@ namespace TwinStickShooter.Enemies
 
             onCooldown = false;
             currentCooldown = CooldownTime;
-
-            
         }
 
         public override void Update(GameTime gameTime)
@@ -61,7 +63,7 @@ namespace TwinStickShooter.Enemies
 
             //checks to see if our enemies hit anything
             CheckCollision(gameTime);
-            
+
             base.Update(gameTime);
         }
 
@@ -71,6 +73,7 @@ namespace TwinStickShooter.Enemies
             base.Draw(gameTime);
         }
 
+        //checks to see if the enemy collides with various things
         private void CheckCollision(GameTime gameTime)
         {
             foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
@@ -96,39 +99,28 @@ namespace TwinStickShooter.Enemies
 
                                     enemy.Enabled = false;
                                     item.Enabled = false;
-                                    numOfEnemiesKilled++;                                 
-                                }                     
+                                    numOfEnemiesKilled++;
+                                }
                             }
                         }
                     }
 
                     //enemy and player collision
-                    if (enemy.Enabled)
+
+                    if (enemy.Intersects(player))
                     {
-                        if (enemy.Intersects(player))
+                        if (enemy.PerPixelCollision(player))
                         {
-                            if (enemy.PerPixelCollision(player))
-                            {
-                                enemy.Location = new Vector2(-100, -100);
-                                enemy.Update(gameTime);
+                            enemy.Location = new Vector2(-100, -100);
+                            enemy.Update(gameTime);
 
-                                enemy.Enabled = false;
-                                numOfEnemiesKilled++;
-                            }
+                            enemy.Enabled = false;
+                            numOfEnemiesKilled++;
                         }
-                    }                   
-                }
-            }
-        }
+                    }
 
-        private void EnemySeek(GameTime gameTime)
-        {
-            foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
-            {
-                if (enemy.Enabled)
-                {
-                    enemy.target = player.Location;
 
+                    //enemy and enemy collision
                     foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
                     {
                         if (other.Enabled)
@@ -156,6 +148,18 @@ namespace TwinStickShooter.Enemies
                             }
                         }
                     }
+                }
+            }
+        }
+
+        //tells the enemies what target to seek
+        private void EnemySeek(GameTime gameTime)
+        {
+            foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
+            {
+                if (enemy.Enabled)
+                {
+                    enemy.playerLoc = player.Location;
                     enemy.Seek(player.Location, gameTime);
                 }
             }

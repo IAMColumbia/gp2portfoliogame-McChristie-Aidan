@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoGameLibrary.Sprite;
 using Microsoft.Xna.Framework.Graphics;
+using TwinStickShooter.Weapons;
 
 namespace TwinStickShooter.Enemies
 {
@@ -20,11 +21,13 @@ namespace TwinStickShooter.Enemies
         public Vector2 velocity;
         public Vector2 desired;
         Vector2 acceleration;
-        public Vector2 target;
+        public Vector2 playerLoc;
 
         //just a place to store the stats for our enemy types
-        public const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
-        public const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
+        const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
+        const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
+        float fireDistance = 200;
+        Weapon gun;
 
         public float currentHealth; 
 
@@ -51,9 +54,19 @@ namespace TwinStickShooter.Enemies
 
             acceleration *= 0;
 
+            //checks to see if the enemy type has changed
             if (enemyType != lastEnemyType)
             {
                 ChangeEnemyType(enemyType);
+            }
+
+            //rotates the enemy to face the player
+            LookAtTarget(playerLoc);
+
+            //shoots at the target if the enemy type is ranged
+            if (Vector2.Distance(playerLoc, this.Location) < fireDistance && this.enemyType == EnemyType.Ranged)
+            {
+                FireGun(playerLoc);
             }
 
             //this.Location += Direction * 
@@ -88,7 +101,23 @@ namespace TwinStickShooter.Enemies
                 default:
                     break;
             }
+            //whatever value we passed in is the new 
             lastEnemyType = targetType;
+        }
+
+        void FireGun(Vector2 target)
+        {
+            gun.RotationFire(this.Location, this.Rotate);
+        }
+
+        void LookAtTarget(Vector2 target)
+        {
+            Vector2 distance;
+
+            distance.X = target.X - this.Location.X;
+            distance.Y = target.Y - this.Location.Y;
+
+            this.Rotate = (float)Math.Atan2(distance.Y, distance.X);
         }
 
         public void AddForce(Vector2 force)
