@@ -22,11 +22,18 @@ namespace TwinStickShooter.Enemies
         public Vector2 desired;
         Vector2 acceleration;
         public Vector2 playerLoc;
+        public Vector2 lastLocation;
 
         //just a place to store the stats for our enemy types
         const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
         const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
-        float fireDistance = 200;
+        //this should be in the enemy class
+        float fireDistance = 600;
+
+        bool onCooldown;
+        float currentCooldown;
+
+        string enemyShotPoolTag = "EnemyShots";
         Weapon gun;
 
         public float currentHealth; 
@@ -37,6 +44,8 @@ namespace TwinStickShooter.Enemies
             this.Direction = new Vector2(0, 1);
             this.enemyType = EnemyType.Normal;
             this.currentHealth = normalHealth;
+
+            this.gun = new HandGun(game, enemyShotPoolTag);
         }
 
         public override void Initialize()
@@ -54,6 +63,7 @@ namespace TwinStickShooter.Enemies
 
         public override void Update(GameTime gameTime)
         {
+            //lastLocation = this.Location;
             velocity += acceleration;
             velocity.Normalize();
             velocity *= (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
@@ -73,7 +83,7 @@ namespace TwinStickShooter.Enemies
             //shoots at the target if the enemy type is ranged
             if (Vector2.Distance(playerLoc, this.Location) < fireDistance && this.enemyType == EnemyType.Ranged)
             {
-                FireGun(playerLoc);
+                FireGun(playerLoc, gameTime);
             }
 
             //this.Location += Direction * 
@@ -94,16 +104,19 @@ namespace TwinStickShooter.Enemies
                     this.Speed = normalSpeed;
                     this.currentHealth = normalHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
+                    this.scale = 1;
                     break;
                 case EnemyType.Ranged:
-                    this.Speed = rangedHealth;
+                    this.Speed = rangedSpeed;
                     this.currentHealth = rangedHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("PurpleGhost");
+                    this.scale = 1;
                     break;
                 case EnemyType.Tank:
                     this.Speed = tankSpeed;
                     this.currentHealth = tankHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("TealGhost");
+                    this.scale = 1.5f;
                     break;
                 default:
                     break;
@@ -112,9 +125,25 @@ namespace TwinStickShooter.Enemies
             lastEnemyType = targetType;
         }
 
-        void FireGun(Vector2 target)
+        void FireGun(Vector2 target, GameTime gameTime)
         {
-            gun.RotationFire(this.Location, this.Rotate);
+            if (onCooldown == false)
+            {
+                onCooldown = true;
+                gun.RotationFire(this.Location, this.Rotate);
+            }
+
+            if (onCooldown)
+            {
+                currentCooldown -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (currentCooldown <= 0f)
+                {
+                    onCooldown = false;
+                    //reduces the cooldown based on the cooldown modifier
+                    this.currentCooldown = gun.CooldownTime;
+                }
+            }
         }
 
         void LookAtTarget(Vector2 target)

@@ -23,7 +23,9 @@ namespace TwinStickShooter.Enemies
 
         //enemy pool variables
         string enemyPoolTag = "Enemies";
-        int enemyPoolSize = 100;
+        int enemyPoolSize = 200;
+        string enemyShotPoolTag = "EnemyShots";
+        int enemyShotPoolSize = 400;
         PoolManager poolManager;
 
         //the player of our game
@@ -33,18 +35,8 @@ namespace TwinStickShooter.Enemies
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
 
-            //technical debt this should be in the pool class 
-            Queue<DrawableSprite> enemies = new Queue<DrawableSprite>();
-            for (int i = 0; i < enemyPoolSize; i++)
-            {
-                Enemy e = new Enemy(game);
-                e.Initialize();
-                e.Enabled = false;
-                enemies.Enqueue(e);
-            }
-
-            Pool pool = new Pool(game, enemies);
-            poolManager.PoolDictionary.Add(enemyPoolTag, pool);
+            poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, enemyShotPoolSize, enemyShotPoolTag);
+            poolManager.InstantiatePool(PoolManager.ClassType.Enemy, game, enemyPoolSize, enemyPoolTag);           
 
             r = new Random();
             player = _player;
@@ -130,7 +122,7 @@ namespace TwinStickShooter.Enemies
                             var sum = new Vector2();
                             int count = 0;
                             //if (enemy.Intersects(other))
-                            if (dist > 0 && dist < 50)
+                            if (dist > 0 && dist < other.spriteTexture.Width)
                             {
                                 var diff = Vector2.Subtract(enemy.Location, other.Location);
                                 diff = Vector2.Divide(diff, dist);
@@ -141,8 +133,10 @@ namespace TwinStickShooter.Enemies
                             {
                                 sum = Vector2.Divide(sum, count);
                                 sum.Normalize();
-                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000) / 10;
+                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
                                 var steer = Vector2.Subtract(sum, enemy.velocity);
+
+                                //enemy.Location = enemy.lastLocation;
 
                                 enemy.AddForce(steer);
                             }

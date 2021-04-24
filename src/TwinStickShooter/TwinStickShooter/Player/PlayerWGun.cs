@@ -27,27 +27,11 @@ namespace TwinStickShooter.Player
 
         GameConsole console;
         PoolManager poolManager;
-        Pool shotPool;
 
         public PlayerWGun(Game game) : base(game)
         {           
+            poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
-
-            ////technical debt this should go into the shot manager but i need to figure out how to make it work for any class.
-            //Queue<DrawableSprite> shots = new Queue<DrawableSprite>();
-            //for (int i = 0; i < shotPoolSize; i++)
-            //{
-            //    Shot s = new Shot(game);
-            //    s.Initialize();
-            //    s.Enabled = false;
-            //    shots.Enqueue(s);
-            //}
-
-            //Pool pool = new Pool(game, shots);
-
-
-            //poolManager.PoolDictionary.Add(bulletPoolTag , pool);
-            shotPool = poolManager.PoolDictionary[shotPoolTag];
 
             gun = new WaveGun(game, shotPoolTag);
 
@@ -102,18 +86,18 @@ namespace TwinStickShooter.Player
         {
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
-                this.gun = new HandGun(this.Game, shotPool, shotPoolTag);
+                this.gun = new HandGun(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new WaveGun(this.Game, shotPool, shotPoolTag);
+                this.gun = new WaveGun(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
             {
-                this.gun = new AssultRifle(this.Game, shotPool, shotPoolTag);
+                this.gun = new AssultRifle(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
         }

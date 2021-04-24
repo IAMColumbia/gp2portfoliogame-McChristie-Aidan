@@ -21,7 +21,7 @@ namespace TwinStickShooter.Weapons
         public WaveGun(Game game, string poolTag)
         {
             base.LoadPool(game, poolTag);
-            this.WeaponName = "ShotGun";
+            this.WeaponName = "WaveGun";
             this.CooldownTime = cooldownTime;
             //this.poolTag = poolTag;
             random = new Random();

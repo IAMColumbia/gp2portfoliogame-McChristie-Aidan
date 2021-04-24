@@ -19,19 +19,20 @@ namespace TwinStickShooter.Pickups
         public PickUpManager(Game game) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-            
-            //technical debt this should be in the pool class
-            Queue<DrawableSprite> pickUps = new Queue<DrawableSprite>();
-            for (int i = 0; i < pickUpPoolSize; i++)
-            {
-                PickUp p = new PickUp(game);
-                p.Initialize();
-                p.Enabled = false;
-                pickUps.Enqueue(p);
-            }
 
-            Pool pool = new Pool(game, pickUps);
-            poolManager.PoolDictionary.Add(pickUpPoolTag, pool);
+            poolManager.InstantiatePool(PoolManager.ClassType.Pickup, game, pickUpPoolSize, pickUpPoolTag);
+
+            ////technical debt this should be in the pool class
+            //Queue<DrawableSprite> pickUps = new Queue<DrawableSprite>();
+            //for (int i = 0; i < pickUpPoolSize; i++)
+            //{
+            //    PickUp p = new PickUp(game);
+            //    p.Initialize();
+            //    p.Enabled = false;
+            //    pickUps.Enqueue(p);
+            //}
+
+            //Pool pool = new Pool(game, pickUps);
         }
     }
 }

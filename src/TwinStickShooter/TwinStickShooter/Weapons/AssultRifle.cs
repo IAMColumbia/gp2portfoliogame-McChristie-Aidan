@@ -13,7 +13,7 @@ namespace TwinStickShooter.Weapons
         float RifleDamge = 2;
         float spreadModifier = .15f;
         float cooldownTime = 150;
-        string poolTag;
+        //string poolTag;
 
         Random r;
 
@@ -22,7 +22,7 @@ namespace TwinStickShooter.Weapons
             base.LoadPool(game, poolTag);
             this.WeaponName = "Assult Rifle";
             this.CooldownTime = cooldownTime;
-            this.poolTag = poolTag;
+            //this.poolTag = poolTag;
             r = new Random();
         }
 

@@ -64,5 +64,6 @@ namespace TwinStickShooter.ObjectPool
 
             objectPool.Enqueue(s);
         }
+
     }
 }
