@@ -14,11 +14,12 @@ namespace TwinStickShooter.Weapons
         float spreadModifier = .15f;
         float cooldownTime = 150;
         string poolTag;
+
         Random r;
 
-        public AssultRifle(Game game, Pool shotPool, string poolTag)
+        public AssultRifle(Game game, string poolTag)
         {
-            this.pool = shotPool;
+            base.LoadPool(game, poolTag);
             this.WeaponName = "Assult Rifle";
             this.CooldownTime = cooldownTime;
             this.poolTag = poolTag;

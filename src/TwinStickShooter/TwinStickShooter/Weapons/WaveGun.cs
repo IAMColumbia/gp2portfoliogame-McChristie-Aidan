@@ -14,16 +14,16 @@ namespace TwinStickShooter.Weapons
         int numberOfBullets = 10;
         float bulletOffset = .09f;
         float cooldownTime = 1000;
-        string poolTag;
+        //string poolTag;
 
         Random random;
 
-        public WaveGun(Game game, Pool shotPool, string poolTag)
+        public WaveGun(Game game, string poolTag)
         {
+            base.LoadPool(game, poolTag);
             this.WeaponName = "ShotGun";
-            this.pool = shotPool;
             this.CooldownTime = cooldownTime;
-            this.poolTag = poolTag;
+            //this.poolTag = poolTag;
             random = new Random();
         }
 

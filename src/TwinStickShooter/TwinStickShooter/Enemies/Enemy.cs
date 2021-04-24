@@ -33,7 +33,7 @@ namespace TwinStickShooter.Enemies
 
         public Enemy(Game game) : base(game)
         {
-            this.Speed = normalHealth;
+            this.Speed = normalSpeed;
             this.Direction = new Vector2(0, 1);
             this.enemyType = EnemyType.Normal;
             this.currentHealth = normalHealth;
@@ -42,7 +42,14 @@ namespace TwinStickShooter.Enemies
         public override void Initialize()
         {
             this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
+            this.Origin = new Vector2(this.SpriteTexture.Width / 2, this.SpriteTexture.Height / 2);
             base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            base.LoadContent();          
+            this.Origin = new Vector2(this.SpriteTexture.Width / 2, this.SpriteTexture.Height / 2);
         }
 
         public override void Update(GameTime gameTime)

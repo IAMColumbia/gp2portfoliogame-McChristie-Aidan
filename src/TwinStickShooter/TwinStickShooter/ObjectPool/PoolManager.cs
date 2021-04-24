@@ -15,6 +15,8 @@ namespace TwinStickShooter.ObjectPool
         Dictionary<string, Pool> poolDictionary;
         GameConsole console;
 
+        public enum ClassType { Enemy, Shot, Pickup}
+
         public Dictionary<string, Pool> PoolDictionary
         {
             get; set;
@@ -46,6 +48,52 @@ namespace TwinStickShooter.ObjectPool
             }
 
             base.Draw(gameTime);
-        }       
+        }
+
+        public void InstantiatePool(ClassType type, Game game, int poolSize, string poolTag)
+            //where T : DrawableSprite, new()
+        {
+            //I have know idea if this is how this would work.
+            //Queue<DrawableSprite> pool = new Queue<DrawableSprite>();
+            //for (int i = 0; i < poolSize; i++)
+            //{
+            //    var instance = Activator.CreateInstance(typeof(T), new DrawableSprite[] { game, null });
+            //    pool.Enqueue(instance);
+            //}
+
+            Queue<DrawableSprite> queue = new Queue<DrawableSprite>();
+
+            for (int i = 0; i < poolSize; i++)
+            {
+                switch (type)
+                {
+                    case ClassType.Enemy:
+                        Enemies.Enemy e = new Enemies.Enemy(game);
+                        e.Initialize();
+                        e.Enabled = false;
+                        queue.Enqueue(e);
+                        break;
+                    case ClassType.Shot:
+                        Shot s = new Shot(game);
+                        s.Initialize();
+                        s.Enabled = false;
+                        queue.Enqueue(s);
+                        break;
+                    case ClassType.Pickup:
+                        Pickups.PickUp p = new Pickups.PickUp(game);
+                        p.Initialize();
+                        p.Enabled = false;
+                        queue.Enqueue(p);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            Pool pool = new Pool(game, queue);
+
+            poolDictionary.Add(poolTag, pool);
+
+        }
     }
 }
