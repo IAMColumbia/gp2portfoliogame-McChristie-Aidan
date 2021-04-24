@@ -57,42 +57,7 @@ namespace TwinStickShooter.Enemies
             //RepeatedRandomSpawn(gameTime);
 
             //makes all of our enemies move towards the player
-            foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
-            {
-                if (enemy.Enabled)
-                {
-                    enemy.target = player.Location;
-
-                    foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
-                    {
-                        if (other.Enabled)
-                        {                            
-                            //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
-                            var dist = Vector2.Distance(enemy.Location, other.Location);
-                            var sum = new Vector2();
-                            int count = 0;
-                            //if (enemy.Intersects(other))
-                            if (dist > 0 && dist < 50)
-                            {
-                                var diff = Vector2.Subtract(enemy.Location, other.Location);
-                                diff = Vector2.Divide(diff, dist);
-                                sum = Vector2.Add(sum, diff);
-                                count++;
-                            }
-                            if (count > 0)
-                            {
-                                sum = Vector2.Divide(sum, count);
-                                sum.Normalize();
-                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000)/10;
-                                var steer = Vector2.Subtract(sum, enemy.velocity);
-
-                                enemy.AddForce(steer);
-                            }                          
-                        }
-                    }
-                    enemy.Seek(player.Location, gameTime);
-                }    
-            }
+            EnemySeek(gameTime);
 
             //checks to see if our enemies hit anything
             CheckCollision(gameTime);
@@ -156,6 +121,46 @@ namespace TwinStickShooter.Enemies
             }
         }
 
+        private void EnemySeek(GameTime gameTime)
+        {
+            foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
+            {
+                if (enemy.Enabled)
+                {
+                    enemy.target = player.Location;
+
+                    foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
+                    {
+                        if (other.Enabled)
+                        {
+                            //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
+                            var dist = Vector2.Distance(enemy.Location, other.Location);
+                            var sum = new Vector2();
+                            int count = 0;
+                            //if (enemy.Intersects(other))
+                            if (dist > 0 && dist < 50)
+                            {
+                                var diff = Vector2.Subtract(enemy.Location, other.Location);
+                                diff = Vector2.Divide(diff, dist);
+                                sum = Vector2.Add(sum, diff);
+                                count++;
+                            }
+                            if (count > 0)
+                            {
+                                sum = Vector2.Divide(sum, count);
+                                sum.Normalize();
+                                sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000) / 10;
+                                var steer = Vector2.Subtract(sum, enemy.velocity);
+
+                                enemy.AddForce(steer);
+                            }
+                        }
+                    }
+                    enemy.Seek(player.Location, gameTime);
+                }
+            }
+        }
+
         //used for nonstop spawning
         private void RepeatedRandomSpawn(GameTime gameTime)
         {
@@ -188,6 +193,7 @@ namespace TwinStickShooter.Enemies
             poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 1));
         }
 
+        //spawning waves
         private void WaveSpawn(GameTime gameTime)
         {
             if (numOfEnemiesKilled >= numOfEnemiesToSpawn)

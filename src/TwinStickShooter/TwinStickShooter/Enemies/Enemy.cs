@@ -11,21 +11,35 @@ namespace TwinStickShooter.Enemies
 {
     class Enemy : DrawableSprite
     {
+        public enum EnemyType { Normal, Ranged, Tank }
+
+        public EnemyType enemyType;
+        private EnemyType lastEnemyType;
+
+        //used for movement calculations 
         public Vector2 velocity;
         public Vector2 desired;
         Vector2 acceleration;
         public Vector2 target;
 
+        //just a place to store the stats for our enemy types
+        public const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
+        public const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
+
+        public float currentHealth; 
+
         public Enemy(Game game) : base(game)
         {
-            this.Speed = 250;
+            this.Speed = normalHealth;
             this.Direction = new Vector2(0, 1);
+            this.enemyType = EnemyType.Normal;
+            this.currentHealth = normalHealth;
         }
 
-        protected override void LoadContent()
+        public override void Initialize()
         {
             this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
-            base.LoadContent();
+            base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
@@ -37,6 +51,11 @@ namespace TwinStickShooter.Enemies
 
             acceleration *= 0;
 
+            if (enemyType != lastEnemyType)
+            {
+                ChangeEnemyType(enemyType);
+            }
+
             //this.Location += Direction * 
             //if (this.IsOffScreen())
             //{
@@ -44,6 +63,32 @@ namespace TwinStickShooter.Enemies
             //}
 
             base.Update(gameTime);
+        }
+
+        //used to change the stats of an enemy to that of a given type
+        void ChangeEnemyType(EnemyType targetType)
+        {
+            switch (targetType)
+            {
+                case EnemyType.Normal:
+                    this.Speed = normalSpeed;
+                    this.currentHealth = normalHealth;
+                    this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
+                    break;
+                case EnemyType.Ranged:
+                    this.Speed = rangedHealth;
+                    this.currentHealth = rangedHealth;
+                    this.spriteTexture = this.Game.Content.Load<Texture2D>("PurpleGhost");
+                    break;
+                case EnemyType.Tank:
+                    this.Speed = tankSpeed;
+                    this.currentHealth = tankHealth;
+                    this.spriteTexture = this.Game.Content.Load<Texture2D>("TealGhost");
+                    break;
+                default:
+                    break;
+            }
+            lastEnemyType = targetType;
         }
 
         public void AddForce(Vector2 force)
