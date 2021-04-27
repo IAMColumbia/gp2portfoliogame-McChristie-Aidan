@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using TwinStickShooter.ObjectPool;
+using TwinStickShooter.Projectiles;
 using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Enemies
@@ -73,24 +74,24 @@ namespace TwinStickShooter.Enemies
                 if (enemy.Enabled)
                 {
                     //enemy and bullet collision
-                    foreach (var item in poolManager.PoolDictionary["Shots"].objectPool)
+                    foreach (Shot shot in poolManager.PoolDictionary["Shots"].objectPool)
                     {
-                        if (item.Enabled)
+                        if (shot.Enabled)
                         {
-                            if (enemy.Intersects(item))
+                            if (enemy.Intersects(shot))
                             {
-                                if (enemy.PerPixelCollision(item))
+                                if (enemy.PerPixelCollision(shot))
                                 {
                                     poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
 
-                                    enemy.Location = new Vector2(-100, -100);
-                                    enemy.Update(gameTime);
+                                    //enemy.Location = new Vector2(-100, -100);
+                                    //enemy.Update(gameTime);
+                                    //enemy.Enabled = false;
 
-                                    item.Location = new Vector2(-50, -50);
-                                    item.Update(gameTime);
+                                    enemy.Dies(gameTime);
 
-                                    enemy.Enabled = false;
-                                    item.Enabled = false;
+                                    shot.Dies(gameTime);
+
                                     numOfEnemiesKilled++;
                                 }
                             }
@@ -98,7 +99,6 @@ namespace TwinStickShooter.Enemies
                     }
 
                     //enemy and player collision
-
                     if (enemy.Intersects(player))
                     {
                         if (enemy.PerPixelCollision(player))

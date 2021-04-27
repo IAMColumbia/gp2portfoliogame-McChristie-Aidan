@@ -86,7 +86,11 @@ namespace TwinStickShooter.Enemies
                 FireGun(playerLoc, gameTime);
             }
 
-            //this.Location += Direction * 
+            if (this.Health < 0)
+            {
+                this.Dies(gameTime);
+            }
+            
             //if (this.IsOffScreen())
             //{
             //    this.Enabled = false;
@@ -116,6 +120,7 @@ namespace TwinStickShooter.Enemies
                     this.Speed = tankSpeed;
                     this.Health = tankHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("TealGhost");
+                    //TODO Figure out why this breaks
                     this.scale = 1;
                     break;
                 default:
@@ -177,6 +182,14 @@ namespace TwinStickShooter.Enemies
             //limit
 
             AddForce(steer);
+        }
+
+        public void Dies(GameTime gameTime)
+        {
+            //this should be a variable
+            this.Location = new Vector2(-100, -100);
+            this.Update(gameTime);
+            this.Enabled = false;
         }
     }
 }

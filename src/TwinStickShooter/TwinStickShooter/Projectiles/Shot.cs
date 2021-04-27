@@ -29,13 +29,22 @@ namespace TwinStickShooter.Projectiles
             this.Location += this.Direction * (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
             this.Speed -= slowdownRate * gameTime.ElapsedGameTime.Milliseconds / 1000; 
 
+
+
             if (this.IsOffScreen())
             {
-                this.Enabled = false;
+                this.Dies(gameTime);
             }
    
             base.Update(gameTime);
         }
-    }
 
+        public void Dies(GameTime gameTime)
+        {
+            //this should be done via variable
+            this.Location = new Vector2(-50, -50);
+            this.Update(gameTime);
+            this.Enabled = false;
+        }
+    } 
 }
