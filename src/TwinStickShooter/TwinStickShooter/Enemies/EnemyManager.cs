@@ -30,9 +30,9 @@ namespace TwinStickShooter.Enemies
         PoolManager poolManager;
 
         //the player of our game
-        Player.Player player;
+        Player.PlayerWGun player;
 
-        public EnemyManager(Game game, Player.Player _player) : base(game)
+        public EnemyManager(Game game, Player.PlayerWGun _player) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
 
@@ -82,15 +82,19 @@ namespace TwinStickShooter.Enemies
                             {
                                 if (enemy.PerPixelCollision(shot))
                                 {
-                                    poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
-
                                     //enemy.Location = new Vector2(-100, -100);
                                     //enemy.Update(gameTime);
                                     //enemy.Enabled = false;
 
-                                    enemy.Dies(gameTime);
-
+                                    //enemy.Dies(gameTime);
+                                    enemy.TakeDamage(shot.damage);
                                     shot.Dies(gameTime);
+
+                                    if (enemy.Health < 0)
+                                    {
+                                        poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                        enemy.Dies(gameTime);
+                                    }
 
                                     numOfEnemiesKilled++;
                                 }
@@ -103,10 +107,8 @@ namespace TwinStickShooter.Enemies
                     {
                         if (enemy.PerPixelCollision(player))
                         {
-                            enemy.Location = new Vector2(-100, -100);
-                            enemy.Update(gameTime);
-
-                            enemy.Enabled = false;
+                            player.TakeDamage(enemy.damage);
+                            enemy.Dies(gameTime);
                             numOfEnemiesKilled++;
                         }
                     }
@@ -136,6 +138,7 @@ namespace TwinStickShooter.Enemies
                                 sum *= (enemy.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
                                 var steer = Vector2.Subtract(sum, enemy.velocity);
 
+                                //freezes enemy in place but its better looking than the vibrations i get now
                                 //enemy.Location = enemy.lastLocation;
 
                                 enemy.AddForce(steer);
@@ -146,6 +149,19 @@ namespace TwinStickShooter.Enemies
             }
         }
 
+        int NumOfActiveEnemies()
+        {
+            int numOfActiveEnemies = 0;
+            foreach (Enemy e in poolManager.PoolDictionary[enemyPoolTag].objectPool)
+            {
+                if (e.Enabled)
+                {
+                    numOfActiveEnemies++;
+                }
+            }           
+            return numOfActiveEnemies;
+        }
+
         //tells the enemies what target to seek
         private void EnemySeek(GameTime gameTime)
         {
@@ -153,6 +169,7 @@ namespace TwinStickShooter.Enemies
             {
                 if (enemy.Enabled)
                 {
+                    
                     enemy.playerLoc = player.Location;
                     enemy.Seek(player.Location, gameTime);
                 }
@@ -194,7 +211,7 @@ namespace TwinStickShooter.Enemies
         //spawning waves
         private void WaveSpawn(GameTime gameTime)
         {
-            if (numOfEnemiesKilled >= numOfEnemiesToSpawn)
+            if (NumOfActiveEnemies() <= 0)
             {
                 //makes sure we done spawn enemies if we are on cooldown
                 if (currentCooldown < timeBetweenRounds)
@@ -219,11 +236,29 @@ namespace TwinStickShooter.Enemies
                     //spawns an enemy for the num of enenies we need this round
                     for (int i = 0; i < numOfEnemiesToSpawn; i++)
                     {
-                        RandomSpawn();
+                        float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
+                        float randomSpawnY = (float)r.Next(-300, 0);
+                        //RandomSpawn();
+                        int typeNum = r.Next(0, 3);
+                        SpawnEnemyOfType((Enemy.EnemyType)typeNum, new Vector2(randomSpawnX, randomSpawnY), new Vector2(0,0));                        
                     }
                     currentCooldown = 0;
                 }
             }
+        }
+
+        //technical debt i should figure a way to put this in pool
+        void SpawnEnemyOfType (Enemies.Enemy.EnemyType type, Vector2 spawnLocation, Vector2 fireDirection)
+        {
+            Enemy enemy = (Enemy)poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
+
+            enemy.Location = spawnLocation;
+            enemy.Direction = fireDirection;
+            enemy.Direction.Normalize();
+            enemy.enemyType = type;
+            enemy.Enabled = true;
+
+            poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(enemy);
         }
     }
 }

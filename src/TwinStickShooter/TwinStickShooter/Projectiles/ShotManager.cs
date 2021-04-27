@@ -19,7 +19,7 @@ namespace TwinStickShooter.Projectiles
 
         public override void Update(GameTime gameTime)
         {
-            CheckCollision();
+            //CheckCollision();
 
             base.Update(gameTime);
         }

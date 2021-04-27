@@ -23,14 +23,17 @@ namespace TwinStickShooter.Enemies
         public Vector2 desired;
         Vector2 acceleration;
         public Vector2 playerLoc;
+        //unused currently
         public Vector2 lastLocation;
 
         //just a place to store the stats for our enemy types
-        const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
+        const float normalSpeed = 200, rangedSpeed = 175, tankSpeed = 250;
         const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
-        float fireDistance = 600;
+        const float normalDamage = 2, rangedDamage = 2, tankDamage = 4;
+        public float fireDistance = 500;
 
         public float Health { get; set; }
+        public float damage;
 
         bool onCooldown;
         float currentCooldown;
@@ -44,6 +47,7 @@ namespace TwinStickShooter.Enemies
             this.Direction = new Vector2(0, 1);
             this.enemyType = EnemyType.Normal;
             this.Health = normalHealth;
+            this.damage = normalDamage;
 
             this.gun = new HandGun(game, enemyShotPoolTag);
         }
@@ -67,7 +71,10 @@ namespace TwinStickShooter.Enemies
             velocity += acceleration;
             velocity.Normalize();
             velocity *= (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
-            this.Location += velocity;
+            if (this.enemyType != EnemyType.Ranged || !(this.enemyType == EnemyType.Ranged && Vector2.Distance(playerLoc, this.Location) < fireDistance))
+            {
+                this.Location += velocity;
+            }
 
             acceleration *= 0;
 
@@ -86,11 +93,12 @@ namespace TwinStickShooter.Enemies
                 FireGun(playerLoc, gameTime);
             }
 
-            if (this.Health < 0)
-            {
-                this.Dies(gameTime);
-            }
-            
+            //this feels like it should be here but caused problems
+            //if (this.Health < 0)
+            //{
+            //    this.Dies(gameTime);
+            //}
+
             //if (this.IsOffScreen())
             //{
             //    this.Enabled = false;

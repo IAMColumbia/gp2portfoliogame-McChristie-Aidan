@@ -22,7 +22,7 @@ namespace TwinStickShooter.Player
         //technical debt the player shouldn't use this
         int shotPoolSize = 100;
 
-        float Health { get; set; }
+        public float Health { get; set; }
 
         public Weapon gun;
 
@@ -33,13 +33,14 @@ namespace TwinStickShooter.Player
         {           
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
+            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
 
             gun = new WaveGun(game, shotPoolTag);
 
             this.cooldownTime = gun.CooldownTime;
             onCooldown = false;
 
-            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
+            this.Health = 10;
         }
 
         public override void Update(GameTime gameTime)
@@ -96,6 +97,7 @@ namespace TwinStickShooter.Player
                 this.gun = new WaveGun(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
+
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
             {
                 this.gun = new AssultRifle(this.Game, shotPoolTag);
@@ -104,7 +106,7 @@ namespace TwinStickShooter.Player
         }
 
         //implements the 'TakeDamage' function
-        void IDamagable.TakeDamage(float damageAmmount)
+        public void TakeDamage(float damageAmmount)
         {
             this.Health -= damageAmmount;
         }
@@ -132,6 +134,11 @@ namespace TwinStickShooter.Player
                     }
                 }
             }
+        }
+
+        public void ResetPlayer()
+        {
+
         }
     }
 }
