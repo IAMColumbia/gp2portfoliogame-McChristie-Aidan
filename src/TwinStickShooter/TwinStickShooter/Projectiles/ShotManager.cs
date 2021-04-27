@@ -32,7 +32,7 @@ namespace TwinStickShooter.Projectiles
                 {
                     foreach (var item in poolManager.PoolDictionary["Enemies"].objectPool)
                     {
-          
+                        
                     }
                 }
             }

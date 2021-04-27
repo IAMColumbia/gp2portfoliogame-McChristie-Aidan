@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameLibrary.Util;
+using MonoGameLibrary.Sprite;
 using TwinStickShooter.Player;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Enemies;
@@ -20,7 +21,7 @@ namespace TwinStickShooter
         SpriteBatch spriteBatch;
         PoolManager pool;
 
-        Player.Player player;
+        PlayerWGun player;
 
         EnemyManager em;
         ShotManager sm;
@@ -33,27 +34,7 @@ namespace TwinStickShooter
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.PreferredBackBufferWidth = 1000; 
-            graphics.PreferredBackBufferHeight = 700;   
-            graphics.ApplyChanges();
-
-            console = new GameConsole(this);
-            this.Components.Add(console);
-
-            pool = new PoolManager(this);
-            this.Components.Add(pool);
-
-            pm = new PickUpManager(this);
-            this.Components.Add(pm);
-
-            player = new PlayerWGun(this);
-            this.Components.Add(player);
-
-            em = new EnemyManager(this, player);
-            this.Components.Add(em);
-
-            sm = new ShotManager(this);
-            this.Components.Add(sm);
+            InitializeGame();
         }
 
         /// <summary>
@@ -102,7 +83,12 @@ namespace TwinStickShooter
                 Exit();
             console.Log("Wave Number : ", em.WaveNumber.ToString());
             console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
-            console.Log("Num of enemies killed : ", em.numOfEnemiesKilled.ToString());
+
+            //TODO need to fix this.
+            if (player.Health <= 0)
+            {
+                reset();
+            }
 
             base.Update(gameTime);
         }
@@ -118,6 +104,47 @@ namespace TwinStickShooter
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }      
+
+        void reset()
+        {                      
+            foreach (Pool queue in pool.PoolDictionary.Values)
+            {
+                foreach (DrawableSprite sprite in queue.objectPool)
+                {
+                    sprite.Enabled = false;
+                }
+            }
+
+            this.player.Reset(this);
+
+            this.em.Reset();
+
+        }
+
+        void InitializeGame()
+        {
+            graphics.PreferredBackBufferWidth = 1000;
+            graphics.PreferredBackBufferHeight = 700;
+            graphics.ApplyChanges();
+
+            console = new GameConsole(this);
+            this.Components.Add(console);
+
+            pool = new PoolManager(this);
+            this.Components.Add(pool);
+
+            pm = new PickUpManager(this);
+            this.Components.Add(pm);
+
+            player = new PlayerWGun(this);
+            this.Components.Add(player);
+            
+            em = new EnemyManager(this, player);
+            this.Components.Add(em);
+
+            sm = new ShotManager(this);
+            this.Components.Add(sm);
         }
     }
 }

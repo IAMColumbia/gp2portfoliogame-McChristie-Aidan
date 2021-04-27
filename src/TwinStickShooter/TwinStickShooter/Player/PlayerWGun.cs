@@ -6,56 +6,37 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TwinStickShooter.Weapons;
-using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Projectiles;
+using TwinStickShooter.ObjectPool;
+using TwinStickShooter.EntitiyTraits;
 using MonoGameLibrary.Util;
-using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Player
 {
-    class PlayerWGun : Player
+    class PlayerWGun : Player, IDamagable
     {
         bool onCooldown;
         float cooldownTime = 1000;
         float playerCooldownModifier = 0;
         int playerBulletsSize = 75;
-        string bulletPoolTag = "Shots";
+        string shotPoolTag = "Shots";
         //technical debt the player shouldn't use this
         int shotPoolSize = 100;
+
+        public float Health { get; set; }
 
         public Weapon gun;
 
         GameConsole console;
         PoolManager poolManager;
-        Pool shotPool;
 
         public PlayerWGun(Game game) : base(game)
-        {
+        {           
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
-
-            //technical debt this should go into the shot manager but i need to figure out how to make it work for any class.
-            Queue<DrawableSprite> shots = new Queue<DrawableSprite>();
-            for (int i = 0; i < shotPoolSize; i++)
-            {
-                Shot s = new Shot(game);
-                s.Initialize();
-                s.Enabled = false;
-                s.Visible = false;
-                shots.Enqueue(s);
-            }
-
-            Pool pool = new Pool(game, shots);
-
-
-            poolManager.PoolDictionary.Add(bulletPoolTag , pool);
-            shotPool = poolManager.PoolDictionary[bulletPoolTag];
-
-            gun = new WaveGun(game, shotPool, bulletPoolTag);
-
-            this.cooldownTime = gun.CooldownTime;
-            onCooldown = false;
-
+            poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
+
+            Reset(game);
         }
 
         public override void Update(GameTime gameTime)
@@ -65,8 +46,9 @@ namespace TwinStickShooter.Player
             //have we swapped guns
             GunSwap();
             //have we hit something
-            CheckCollision();
+            CheckCollision(gameTime);
             //useful info
+            console.Log("Player Health : ", this.Health.ToString());
             console.Log("player current gun : ", this.gun.WeaponName);
             console.Log("player cooldown: ", cooldownTime.ToString());
 
@@ -81,7 +63,7 @@ namespace TwinStickShooter.Player
             if (mouseState.LeftButton == ButtonState.Pressed && onCooldown == false)
             {
                 onCooldown = true;
-                gun.RotationFire(this.Location, this.Rotate);
+                gun.RotationFire(this.Location, this.Rotate, 800);
             }
 
             if (onCooldown)
@@ -103,24 +85,31 @@ namespace TwinStickShooter.Player
         {
             if(Controller.Input.KeyboardState.HasReleasedKey(Keys.D1))
             {
-                this.gun = new HandGun(this.Game, shotPool, bulletPoolTag);
+                this.gun = new HandGun(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
 
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D2))
             {
-                this.gun = new WaveGun(this.Game, shotPool, bulletPoolTag);
+                this.gun = new WaveGun(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
+
             if (Controller.Input.KeyboardState.HasReleasedKey(Keys.D3))
             {
-                this.gun = new AssultRifle(this.Game, shotPool, bulletPoolTag);
+                this.gun = new AssultRifle(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
         }
 
+        //implements the 'TakeDamage' function
+        public void TakeDamage(float damageAmmount)
+        {
+            this.Health -= damageAmmount;
+        }
+
         //checks for when the player hits something
-        void CheckCollision()
+        void CheckCollision(GameTime gameTime)
         {
             //player and pick up collision
             foreach (Pickups.PickUp pickUp in poolManager.PoolDictionary["PickUps"].objectPool)
@@ -131,8 +120,20 @@ namespace TwinStickShooter.Player
                     {
                         if (pickUp.PerPixelCollision(this))
                         {
+                            //pickUp.Location = new Vector2(-100, -50);
                             pickUp.Enabled = false;
-                            playerCooldownModifier += pickUp.pickUpValue;
+                            
+                            switch (pickUp.type)
+                            {
+                                case Pickups.PickUp.PickUpType.AttackSpeed:
+                                    playerCooldownModifier += pickUp.pickUpValue;
+                                    break;
+                                case Pickups.PickUp.PickUpType.Health:
+                                    this.Health += pickUp.pickUpValue;
+                                    break;
+                                default:
+                                    break;
+                            }
                             if (!onCooldown)
                             {
                                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
@@ -141,6 +142,32 @@ namespace TwinStickShooter.Player
                     }
                 }
             }
+
+            foreach (Shot s in poolManager.PoolDictionary["EnemyShots"].objectPool)
+            {
+                if (s.Enabled)
+                {
+                    if (s.Intersects(this))
+                    {
+                        if (s.PerPixelCollision(this))
+                        {
+                            s.Dies(gameTime);
+                            this.TakeDamage(s.damage);
+                        }
+                    }
+                }              
+            }
+        }
+
+        public void Reset(Game game)
+        {
+            this.Location = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            gun = new WaveGun(game, shotPoolTag);
+
+            this.cooldownTime = gun.CooldownTime;
+            onCooldown = false;
+
+            this.Health = 10;
         }
     }
 }

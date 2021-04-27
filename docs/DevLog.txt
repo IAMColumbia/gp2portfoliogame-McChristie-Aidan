@@ -6,5 +6,6 @@
 # GAME STRUCTURE
 
 # WHAT NEEDS TO BE IMPROVED
-- The pool class needs to be able to instantiate the queue it uses as a pool. Right now you need to pass the queue into the pool class as you create a new instance.
-- There is a very major glitch right now. If one of the managers spawns an object from its designated pool after it became disabled on screen, there is 1 frame where it doesn't update its location. This means theres 1 frame where the enemy or bullet could potentially collide with something before it updates its position.
+- Enemies should be spawned all around the screen instead of just above and ideally in patterns.
+- Game balance also could use work
+- The lack of a UI needs to be changed

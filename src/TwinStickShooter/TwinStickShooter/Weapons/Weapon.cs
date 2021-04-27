@@ -15,7 +15,7 @@ namespace TwinStickShooter.Weapons
         float CooldownTime { get; }
 
         void Fire(Vector2 spawnLocation, Vector2 target);
-        void RotationFire(Vector2 spawnLocation, float playerRotation);
+        void RotationFire(Vector2 spawnLocation, float playerRotation , float shotSpeed);
     }
 
     class Weapon : IWeapon
@@ -29,7 +29,7 @@ namespace TwinStickShooter.Weapons
             //TODO add Shot logic
         }
 
-        public virtual void RotationFire(Vector2 spawnLocation, float playerRotation)
+        public virtual void RotationFire(Vector2 spawnLocation, float playerRotation, float shotSpeed)
         {
 
         }

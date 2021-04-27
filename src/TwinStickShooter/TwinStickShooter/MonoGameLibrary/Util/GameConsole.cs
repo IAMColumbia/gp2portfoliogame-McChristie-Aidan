@@ -68,7 +68,7 @@ namespace MonoGameLibrary.Util
             this.fontName = "Arial";        //default font
             this.gameConsoleText = new List<string>();
             this.maxLines = 20;             //deafult nuber of lines
-            this.debugText = "Console default \ndebug text";
+            //this.debugText = "Console default \ndebug text";
             this.ToggleConsoleKey = Keys.OemTilde;  //default key
             this.debugTextStartX = 400;     //Default locationX
             this.debugTextStartY = 0;       //Default locationY
@@ -78,6 +78,7 @@ namespace MonoGameLibrary.Util
             this.outText = "";
            
             input = (InputHandler)game.Services.GetService(typeof(IInputHandler));
+            
             //Make sure input service exsists if not lazily add one
             if (input == null)
             {
@@ -91,7 +92,11 @@ namespace MonoGameLibrary.Util
                     throw new Exception("GameConsole Depends on Input service please add input service before you add GameConsole.");
                 }
             }
-            game.Services.AddService(typeof(IGameConsole), this);
+
+            if ((GameConsole)game.Services.GetService(typeof(IGameConsole)) == null)
+            {
+                game.Services.AddService(typeof(IGameConsole), this);
+            }
         }
 
         protected override void LoadContent()

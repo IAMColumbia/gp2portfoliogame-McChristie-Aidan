@@ -13,19 +13,20 @@ namespace TwinStickShooter.Weapons
         float RifleDamge = 2;
         float spreadModifier = .15f;
         float cooldownTime = 150;
-        string poolTag;
+        //string poolTag;
+
         Random r;
 
-        public AssultRifle(Game game, Pool shotPool, string poolTag)
+        public AssultRifle(Game game, string poolTag)
         {
-            this.pool = shotPool;
+            base.LoadPool(game, poolTag);
             this.WeaponName = "Assult Rifle";
             this.CooldownTime = cooldownTime;
-            this.poolTag = poolTag;
+            //this.poolTag = poolTag;
             r = new Random();
         }
 
-        public override void RotationFire(Vector2 spawnLocation, float playerRotation)
+        public override void RotationFire(Vector2 spawnLocation, float playerRotation, float speed)
         {
             float offset;
 
@@ -40,7 +41,8 @@ namespace TwinStickShooter.Weapons
 
             Vector2 target = new Vector2((float)Math.Cos(playerRotation+(offset * spreadModifier)), (float)Math.Sin(playerRotation+(offset * spreadModifier)));
 
-            pool.SpawnFromPool(spawnLocation, target);
+            Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
+            s.Speed = speed;
         }
     }
 }

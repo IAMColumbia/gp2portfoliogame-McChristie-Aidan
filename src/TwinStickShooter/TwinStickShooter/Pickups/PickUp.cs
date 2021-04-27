@@ -14,9 +14,13 @@ namespace TwinStickShooter.Pickups
     {
         public float pickUpValue;
 
+        public enum PickUpType { AttackSpeed, Health }
+
+        public PickUpType type;
+
         public PickUp(Game game) : base(game)
         {
-            this.pickUpValue = 1f;
+            this.pickUpValue = .5f;
         }
 
         protected override void LoadContent()
@@ -27,8 +31,23 @@ namespace TwinStickShooter.Pickups
 
         public override void Update(GameTime gameTime)
         {
-            this.DrawColor = Color.Red;
+            ChangeDrawColor();
             base.Update(gameTime);
+        }
+
+        void ChangeDrawColor()
+        {
+            switch (type)
+            {
+                case PickUpType.AttackSpeed:
+                    this.DrawColor = Color.Red;
+                    break;
+                case PickUpType.Health:
+                    this.DrawColor = Color.Green;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

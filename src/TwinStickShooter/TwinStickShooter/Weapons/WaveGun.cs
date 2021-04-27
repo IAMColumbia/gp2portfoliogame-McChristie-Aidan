@@ -14,32 +14,32 @@ namespace TwinStickShooter.Weapons
         int numberOfBullets = 10;
         float bulletOffset = .09f;
         float cooldownTime = 1000;
-        string poolTag;
+        //string poolTag;
 
         Random random;
 
-        public WaveGun(Game game, Pool shotPool, string poolTag)
+        public WaveGun(Game game, string poolTag)
         {
-            this.WeaponName = "ShotGun";
-            this.pool = shotPool;
+            base.LoadPool(game, poolTag);
+            this.WeaponName = "WaveGun";
             this.CooldownTime = cooldownTime;
-            this.poolTag = poolTag;
+            //this.poolTag = poolTag;
             random = new Random();
         }
 
-        public override void RotationFire(Vector2 locationOfGunHolder, float playerRotation)
+        public override void RotationFire(Vector2 locationOfGunHolder, float playerRotation, float speed)
         {
-            //needs work
-            WaveSpread(locationOfGunHolder, playerRotation);
+            WaveSpread(locationOfGunHolder, playerRotation, speed);
         }
 
-        void WaveSpread(Vector2 spawnLocation, float playerRotation)
+        void WaveSpread(Vector2 spawnLocation, float playerRotation, float speed)
         {
             for (int i = (int)-(.5*numberOfBullets); i < (.5*numberOfBullets); i++)
             {
                 Vector2 target = new Vector2((float)Math.Cos(playerRotation+(bulletOffset*i)), (float)Math.Sin(playerRotation+(bulletOffset*i)));
 
-                pool.SpawnFromPool(spawnLocation, target);
+                Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
+                s.Speed = speed;
             }
         }
     }
