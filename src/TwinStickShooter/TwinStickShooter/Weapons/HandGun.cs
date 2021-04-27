@@ -22,10 +22,11 @@ namespace TwinStickShooter.Weapons
             //this.poolTag = poolTag;
         }
 
-        public override void RotationFire(Vector2 spawnLocation, float playerRotation)
+        public override void RotationFire(Vector2 spawnLocation, float playerRotation, float speed)
         {
             Vector2 target = new Vector2((float)Math.Cos(playerRotation), (float)Math.Sin(playerRotation));
-            pool.SpawnFromPool(spawnLocation, target);
+            Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
+            s.Speed = speed;
         }
 
         public override void Fire(Vector2 spawnLocation, Vector2 target)

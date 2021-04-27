@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameLibrary.Util;
+using MonoGameLibrary.Sprite;
 using TwinStickShooter.Player;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Enemies;
@@ -83,11 +84,11 @@ namespace TwinStickShooter
             console.Log("Wave Number : ", em.WaveNumber.ToString());
             console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
 
-            //need to fix this.
-            //if (player.Health <= 0)
-            //{
-            //    reset();
-            //}
+            //TODO need to fix this.
+            if (player.Health <= 0)
+            {
+                reset();
+            }
 
             base.Update(gameTime);
         }
@@ -106,18 +107,19 @@ namespace TwinStickShooter
         }      
 
         void reset()
-        {
-            this.console = new GameConsole(this);
+        {                      
+            foreach (Pool queue in pool.PoolDictionary.Values)
+            {
+                foreach (DrawableSprite sprite in queue.objectPool)
+                {
+                    sprite.Enabled = false;
+                }
+            }
 
-            this.pool = new PoolManager(this);
+            this.player.Reset(this);
 
-            this.pm = new PickUpManager(this);
+            this.em.Reset();
 
-            this.player = new PlayerWGun(this);
-
-            this.em = new EnemyManager(this, player);
-
-            this.sm = new ShotManager(this);
         }
 
         void InitializeGame()

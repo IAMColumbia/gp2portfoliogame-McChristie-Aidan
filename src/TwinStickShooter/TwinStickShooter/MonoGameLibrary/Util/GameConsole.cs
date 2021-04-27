@@ -68,7 +68,7 @@ namespace MonoGameLibrary.Util
             this.fontName = "Arial";        //default font
             this.gameConsoleText = new List<string>();
             this.maxLines = 20;             //deafult nuber of lines
-            this.debugText = "Console default \ndebug text";
+            //this.debugText = "Console default \ndebug text";
             this.ToggleConsoleKey = Keys.OemTilde;  //default key
             this.debugTextStartX = 400;     //Default locationX
             this.debugTextStartY = 0;       //Default locationY

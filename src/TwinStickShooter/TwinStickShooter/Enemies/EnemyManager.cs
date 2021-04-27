@@ -82,17 +82,14 @@ namespace TwinStickShooter.Enemies
                             {
                                 if (enemy.PerPixelCollision(shot))
                                 {
-                                    //enemy.Location = new Vector2(-100, -100);
-                                    //enemy.Update(gameTime);
-                                    //enemy.Enabled = false;
-
-                                    //enemy.Dies(gameTime);
+                                    //enemy takes damage and destroys the shot
                                     enemy.TakeDamage(shot.damage);
                                     shot.Dies(gameTime);
 
                                     if (enemy.Health < 0)
                                     {
-                                        poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                        Pickups.PickUp p = (Pickups.PickUp)poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
+                                        p.type = (Pickups.PickUp.PickUpType)r.Next(0, Enum.GetNames(typeof(Pickups.PickUp.PickUpType)).Length);
                                         enemy.Dies(gameTime);
                                     }
 
@@ -117,7 +114,7 @@ namespace TwinStickShooter.Enemies
                     //enemy and enemy collision
                     foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
                     {
-                        if (other.Enabled)
+                        if (other.Enabled && other.enemyType != Enemy.EnemyType.Ranged)
                         {
                             //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
                             var dist = Vector2.Distance(enemy.Location, other.Location);
@@ -259,6 +256,13 @@ namespace TwinStickShooter.Enemies
             enemy.Enabled = true;
 
             poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(enemy);
+        }
+
+        public void Reset()
+        {
+            numOfEnemiesToSpawn = 5;
+            numOfEnemiesKilled = 10;
+            WaveNumber = 0;
         }
     }
 }

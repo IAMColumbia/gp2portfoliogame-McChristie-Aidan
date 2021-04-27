@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TwinStickShooter.Weapons;
+using TwinStickShooter.Projectiles;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.EntitiyTraits;
 using MonoGameLibrary.Util;
@@ -35,12 +36,7 @@ namespace TwinStickShooter.Player
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
 
-            gun = new WaveGun(game, shotPoolTag);
-
-            this.cooldownTime = gun.CooldownTime;
-            onCooldown = false;
-
-            this.Health = 10;
+            Reset(game);
         }
 
         public override void Update(GameTime gameTime)
@@ -50,8 +46,9 @@ namespace TwinStickShooter.Player
             //have we swapped guns
             GunSwap();
             //have we hit something
-            CheckCollision();
+            CheckCollision(gameTime);
             //useful info
+            console.Log("Player Health : ", this.Health.ToString());
             console.Log("player current gun : ", this.gun.WeaponName);
             console.Log("player cooldown: ", cooldownTime.ToString());
 
@@ -66,7 +63,7 @@ namespace TwinStickShooter.Player
             if (mouseState.LeftButton == ButtonState.Pressed && onCooldown == false)
             {
                 onCooldown = true;
-                gun.RotationFire(this.Location, this.Rotate);
+                gun.RotationFire(this.Location, this.Rotate, 800);
             }
 
             if (onCooldown)
@@ -112,7 +109,7 @@ namespace TwinStickShooter.Player
         }
 
         //checks for when the player hits something
-        void CheckCollision()
+        void CheckCollision(GameTime gameTime)
         {
             //player and pick up collision
             foreach (Pickups.PickUp pickUp in poolManager.PoolDictionary["PickUps"].objectPool)
@@ -125,7 +122,18 @@ namespace TwinStickShooter.Player
                         {
                             //pickUp.Location = new Vector2(-100, -50);
                             pickUp.Enabled = false;
-                            playerCooldownModifier += pickUp.pickUpValue;
+                            
+                            switch (pickUp.type)
+                            {
+                                case Pickups.PickUp.PickUpType.AttackSpeed:
+                                    playerCooldownModifier += pickUp.pickUpValue;
+                                    break;
+                                case Pickups.PickUp.PickUpType.Health:
+                                    this.Health += pickUp.pickUpValue;
+                                    break;
+                                default:
+                                    break;
+                            }
                             if (!onCooldown)
                             {
                                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
@@ -134,11 +142,32 @@ namespace TwinStickShooter.Player
                     }
                 }
             }
+
+            foreach (Shot s in poolManager.PoolDictionary["EnemyShots"].objectPool)
+            {
+                if (s.Enabled)
+                {
+                    if (s.Intersects(this))
+                    {
+                        if (s.PerPixelCollision(this))
+                        {
+                            s.Dies(gameTime);
+                            this.TakeDamage(s.damage);
+                        }
+                    }
+                }              
+            }
         }
 
-        public void ResetPlayer()
+        public void Reset(Game game)
         {
+            this.Location = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            gun = new WaveGun(game, shotPoolTag);
 
+            this.cooldownTime = gun.CooldownTime;
+            onCooldown = false;
+
+            this.Health = 10;
         }
     }
 }

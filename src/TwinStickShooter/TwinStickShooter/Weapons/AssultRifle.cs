@@ -26,7 +26,7 @@ namespace TwinStickShooter.Weapons
             r = new Random();
         }
 
-        public override void RotationFire(Vector2 spawnLocation, float playerRotation)
+        public override void RotationFire(Vector2 spawnLocation, float playerRotation, float speed)
         {
             float offset;
 
@@ -41,7 +41,8 @@ namespace TwinStickShooter.Weapons
 
             Vector2 target = new Vector2((float)Math.Cos(playerRotation+(offset * spreadModifier)), (float)Math.Sin(playerRotation+(offset * spreadModifier)));
 
-            pool.SpawnFromPool(spawnLocation, target);
+            Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
+            s.Speed = speed;
         }
     }
 }

@@ -27,19 +27,19 @@ namespace TwinStickShooter.Weapons
             random = new Random();
         }
 
-        public override void RotationFire(Vector2 locationOfGunHolder, float playerRotation)
+        public override void RotationFire(Vector2 locationOfGunHolder, float playerRotation, float speed)
         {
-            //needs work
-            WaveSpread(locationOfGunHolder, playerRotation);
+            WaveSpread(locationOfGunHolder, playerRotation, speed);
         }
 
-        void WaveSpread(Vector2 spawnLocation, float playerRotation)
+        void WaveSpread(Vector2 spawnLocation, float playerRotation, float speed)
         {
             for (int i = (int)-(.5*numberOfBullets); i < (.5*numberOfBullets); i++)
             {
                 Vector2 target = new Vector2((float)Math.Cos(playerRotation+(bulletOffset*i)), (float)Math.Sin(playerRotation+(bulletOffset*i)));
 
-                pool.SpawnFromPool(spawnLocation, target);
+                Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
+                s.Speed = speed;
             }
         }
     }

@@ -71,6 +71,7 @@ namespace TwinStickShooter.Enemies
             velocity += acceleration;
             velocity.Normalize();
             velocity *= (this.Speed * gameTime.ElapsedGameTime.Milliseconds / 1000);
+
             if (this.enemyType != EnemyType.Ranged || !(this.enemyType == EnemyType.Ranged && Vector2.Distance(playerLoc, this.Location) < fireDistance))
             {
                 this.Location += velocity;
@@ -128,7 +129,7 @@ namespace TwinStickShooter.Enemies
                     this.Speed = tankSpeed;
                     this.Health = tankHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("TealGhost");
-                    //TODO Figure out why this breaks
+                    //TODO figure out why this breaks
                     this.scale = 1;
                     break;
                 default:
@@ -143,7 +144,7 @@ namespace TwinStickShooter.Enemies
             if (onCooldown == false)
             {
                 onCooldown = true;
-                gun.RotationFire(this.Location, this.Rotate);
+                gun.RotationFire(this.Location, this.Rotate, 400f);
             }
 
             if (onCooldown)

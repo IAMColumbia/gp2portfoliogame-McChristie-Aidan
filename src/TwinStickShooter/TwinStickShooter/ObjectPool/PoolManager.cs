@@ -25,10 +25,12 @@ namespace TwinStickShooter.ObjectPool
         public PoolManager(Game game) : base(game)
         {
             console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
+
             if ((PoolManager)game.Services.GetService(typeof(IPoolManager)) == null)
             {
                 this.Game.Services.AddService(typeof(IPoolManager), this);
             }
+
             poolDictionary = new Dictionary<string, Pool>();
             PoolDictionary = poolDictionary;
         }
