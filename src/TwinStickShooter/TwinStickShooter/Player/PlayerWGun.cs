@@ -7,13 +7,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TwinStickShooter.Weapons;
 using TwinStickShooter.ObjectPool;
-using TwinStickShooter.Projectiles;
+using TwinStickShooter.EntitiyTraits;
 using MonoGameLibrary.Util;
-using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Player
 {
-    class PlayerWGun : Player
+    class PlayerWGun : Player, IDamagable
     {
         bool onCooldown;
         float cooldownTime = 1000;
@@ -22,6 +21,8 @@ namespace TwinStickShooter.Player
         string shotPoolTag = "Shots";
         //technical debt the player shouldn't use this
         int shotPoolSize = 100;
+
+        float Health { get; set; }
 
         public Weapon gun;
 
@@ -100,6 +101,12 @@ namespace TwinStickShooter.Player
                 this.gun = new AssultRifle(this.Game, shotPoolTag);
                 this.cooldownTime = gun.CooldownTime - (gun.CooldownTime * (playerCooldownModifier / 100));
             }
+        }
+
+        //implements the 'TakeDamage' function
+        void IDamagable.TakeDamage(float damageAmmount)
+        {
+            this.Health -= damageAmmount;
         }
 
         //checks for when the player hits something

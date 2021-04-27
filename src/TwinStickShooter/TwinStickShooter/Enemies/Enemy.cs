@@ -7,10 +7,11 @@ using Microsoft.Xna.Framework;
 using MonoGameLibrary.Sprite;
 using Microsoft.Xna.Framework.Graphics;
 using TwinStickShooter.Weapons;
+using TwinStickShooter.EntitiyTraits;
 
 namespace TwinStickShooter.Enemies
 {
-    class Enemy : DrawableSprite
+    class Enemy : DrawableSprite, IDamagable
     {
         public enum EnemyType { Normal, Ranged, Tank }
 
@@ -27,8 +28,9 @@ namespace TwinStickShooter.Enemies
         //just a place to store the stats for our enemy types
         const float normalSpeed = 250, rangedSpeed = 200, tankSpeed = 225;
         const float normalHealth = 10, rangedHealth = 7, tankHealth = 20;
-        //this should be in the enemy class
         float fireDistance = 600;
+
+        public float Health { get; set; }
 
         bool onCooldown;
         float currentCooldown;
@@ -36,14 +38,12 @@ namespace TwinStickShooter.Enemies
         string enemyShotPoolTag = "EnemyShots";
         Weapon gun;
 
-        public float currentHealth; 
-
         public Enemy(Game game) : base(game)
         {
             this.Speed = normalSpeed;
             this.Direction = new Vector2(0, 1);
             this.enemyType = EnemyType.Normal;
-            this.currentHealth = normalHealth;
+            this.Health = normalHealth;
 
             this.gun = new HandGun(game, enemyShotPoolTag);
         }
@@ -102,21 +102,21 @@ namespace TwinStickShooter.Enemies
             {
                 case EnemyType.Normal:
                     this.Speed = normalSpeed;
-                    this.currentHealth = normalHealth;
+                    this.Health = normalHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("RedGhost");
                     this.scale = 1;
                     break;
                 case EnemyType.Ranged:
                     this.Speed = rangedSpeed;
-                    this.currentHealth = rangedHealth;
+                    this.Health = rangedHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("PurpleGhost");
                     this.scale = 1;
                     break;
                 case EnemyType.Tank:
                     this.Speed = tankSpeed;
-                    this.currentHealth = tankHealth;
+                    this.Health = tankHealth;
                     this.spriteTexture = this.Game.Content.Load<Texture2D>("TealGhost");
-                    this.scale = 1.5f;
+                    this.scale = 1;
                     break;
                 default:
                     break;
@@ -144,6 +144,12 @@ namespace TwinStickShooter.Enemies
                     this.currentCooldown = gun.CooldownTime;
                 }
             }
+        }
+
+        //implements the 'TakeDamage' function
+        public void TakeDamage(float damageAmmount)
+        {
+            this.Health -= damageAmmount;
         }
 
         void LookAtTarget(Vector2 target)
