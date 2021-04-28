@@ -238,27 +238,14 @@ namespace TwinStickShooter.Enemies
                         float randomSpawnY = (float)r.Next(-300, 0);
                         //RandomSpawn();
                         int typeNum = r.Next(0, 3);
-                        SpawnEnemyOfType((Enemy.EnemyType)typeNum, new Vector2(randomSpawnX, randomSpawnY), new Vector2(0,0));                        
+                        Enemy enemy = (Enemy)poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 0));
+                        enemy.enemyType = (Enemy.EnemyType)typeNum;                      
                     }
                     currentCooldown = 0;
                 }
             }
         }
-
-        //technical debt i should figure a way to put this in pool
-        void SpawnEnemyOfType (Enemies.Enemy.EnemyType type, Vector2 spawnLocation, Vector2 fireDirection)
-        {
-            Enemy enemy = (Enemy)poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
-
-            enemy.Location = spawnLocation;
-            enemy.Direction = fireDirection;
-            enemy.Direction.Normalize();
-            enemy.enemyType = type;
-            enemy.Enabled = true;
-
-            poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(enemy);
-        }
-
+       
         public void Reset()
         {
             numOfEnemiesToSpawn = 5;
