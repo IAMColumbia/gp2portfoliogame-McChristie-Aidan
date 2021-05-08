@@ -24,7 +24,7 @@ namespace TwinStickShooter.Enemies
         Vector2 acceleration;
         public Vector2 playerLoc;
         //unused currently
-        public Vector2 lastLocation;
+        //public Vector2 lastLocation;
 
         //just a place to store the stats for our enemy types
         const float normalSpeed = 200, rangedSpeed = 175, tankSpeed = 250;

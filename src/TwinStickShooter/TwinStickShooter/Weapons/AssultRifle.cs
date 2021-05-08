@@ -10,7 +10,7 @@ namespace TwinStickShooter.Weapons
 {
     class AssultRifle : RangedWeapon
     {
-        float RifleDamge = 2;
+        float RifleDamge = .5f;
         float spreadModifier = .15f;
         float cooldownTime = 150;
         //string poolTag;
@@ -43,6 +43,7 @@ namespace TwinStickShooter.Weapons
 
             Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
             s.Speed = speed;
+            s.damage = RifleDamge;
         }
     }
 }

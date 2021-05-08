@@ -10,7 +10,7 @@ namespace TwinStickShooter.Weapons
 {
     class HandGun : RangedWeapon
     {
-        float HandGunDamge = 2;
+        float HandGunDamge = 2.5f;
         float cooldownTime = 250;
         //string poolTag;
 
@@ -27,6 +27,7 @@ namespace TwinStickShooter.Weapons
             Vector2 target = new Vector2((float)Math.Cos(playerRotation), (float)Math.Sin(playerRotation));
             Projectiles.Shot s = (Projectiles.Shot)pool.SpawnFromPool(spawnLocation, target);
             s.Speed = speed;
+            s.damage = HandGunDamge;
         }
 
         public override void Fire(Vector2 spawnLocation, Vector2 target)

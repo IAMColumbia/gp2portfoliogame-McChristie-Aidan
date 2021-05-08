@@ -17,8 +17,10 @@ namespace TwinStickShooter.Player
     {
         bool onCooldown;
         float cooldownTime = 1000;
+
+        public float CoolDown { get { return cooldownTime; } }
+
         float playerCooldownModifier = 0;
-        int playerBulletsSize = 75;
         string shotPoolTag = "Shots";
         //technical debt the player shouldn't use this
         int shotPoolSize = 100;
@@ -167,7 +169,7 @@ namespace TwinStickShooter.Player
             this.cooldownTime = gun.CooldownTime;
             onCooldown = false;
 
-            this.Health = 10;
+            this.Health = 20;
         }
     }
 }

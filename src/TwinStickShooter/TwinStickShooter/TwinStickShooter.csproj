@@ -43,8 +43,12 @@
   <ItemGroup>
     <Compile Include="Enemies\Enemy.cs" />
     <Compile Include="Enemies\EnemyManager.cs" />
+    <Compile Include="Enemies\RangedEnemy.cs" />
+    <Compile Include="Enemies\TankEnemy.cs" />
     <Compile Include="EntitiyTraits\IDamagable.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="HUD\HeadsUpDisplay.cs" />
+    <Compile Include="HUD\StatusBar.cs" />
     <Compile Include="ObjectPool\IPoolManager.cs" />
     <Compile Include="ObjectPool\Pool.cs" />
     <Compile Include="ObjectPool\PoolManager.cs" />
@@ -70,7 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\food.png" />
+    <Content Include="Content\block.png" />
     <Content Include="Content\GhostHit.png" />
     <Content Include="Content\pacmanSingle.png" />
     <Content Include="Content\PurpleGhost.png" />
@@ -82,6 +86,7 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Text.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="MonoGameLibrary\MonoGameLibrary.csproj">

@@ -8,6 +8,7 @@ using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Enemies;
 using TwinStickShooter.Projectiles;
 using TwinStickShooter.Pickups;
+using TwinStickShooter.HUD;
 
 namespace TwinStickShooter
 {
@@ -22,6 +23,7 @@ namespace TwinStickShooter
         PoolManager pool;
 
         PlayerWGun player;
+        HeadsUpDisplay hb;
 
         EnemyManager em;
         ShotManager sm;
@@ -145,6 +147,9 @@ namespace TwinStickShooter
 
             sm = new ShotManager(this);
             this.Components.Add(sm);
+
+            hb = new HeadsUpDisplay(this, player);
+            this.Components.Add(hb);
         }
     }
 }
