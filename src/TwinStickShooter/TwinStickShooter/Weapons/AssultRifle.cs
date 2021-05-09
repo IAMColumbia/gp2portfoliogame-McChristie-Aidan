@@ -10,7 +10,7 @@ namespace TwinStickShooter.Weapons
 {
     class AssultRifle : RangedWeapon
     {
-        float RifleDamge = .5f;
+        float RifleDamge = 1.7f;
         float spreadModifier = .15f;
         float cooldownTime = 150;
         //string poolTag;

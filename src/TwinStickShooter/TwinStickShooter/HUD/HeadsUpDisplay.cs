@@ -12,18 +12,29 @@ namespace TwinStickShooter.HUD
     {
         StatusBar healthBar;
         StatusBar cooldownBar;
+
+        HudText waveNumber;
+
         Player.PlayerWGun targetPlayer;
         List<DrawableGameComponent> activeHudElements;
 
+        ScoreManager scoreManager;
+
         public HeadsUpDisplay(Game game, TwinStickShooter.Player.PlayerWGun player) : base (game)
         {
+            scoreManager = (ScoreManager)this.Game.Services.GetService<IScoreManager>();
+
             activeHudElements = new List<DrawableGameComponent>();
 
             //I need to find better art assests
             healthBar = new StatusBar(game, new Vector2(50, 20), "block", Color.Red);
             activeHudElements.Add(healthBar);
-            cooldownBar = new StatusBar(game, new Vector2(GraphicsDevice.Viewport.Width /2, GraphicsDevice.Viewport.Height - 80), "block", Color.White);
+
+            cooldownBar = new StatusBar(game, new Vector2(GraphicsDevice.Viewport.Width /2, GraphicsDevice.Viewport.Height - 80), "block", Color.White * 0.5f);
             activeHudElements.Add(cooldownBar);
+
+            waveNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 40), Color.Black);
+            activeHudElements.Add(waveNumber);
 
             targetPlayer = player;
         }
@@ -35,6 +46,8 @@ namespace TwinStickShooter.HUD
             cooldownBar.statValue = targetPlayer.CoolDown;
             cooldownBar.position = new Vector2((GraphicsDevice.Viewport.Width / 2) - cooldownBar.statValue / 2, GraphicsDevice.Viewport.Height - 80);
 
+            waveNumber.text = "Wave Number: " + scoreManager.waveNumber.ToString();
+
             foreach (DrawableGameComponent item in activeHudElements)
             {
                 item.Update(gameTime);
@@ -45,6 +58,7 @@ namespace TwinStickShooter.HUD
 
         public override void Draw(GameTime gameTime)
         {
+            
 
             foreach (DrawableGameComponent item in activeHudElements)
             {
@@ -53,5 +67,7 @@ namespace TwinStickShooter.HUD
 
             base.Draw(gameTime);
         }
+
+        
     }
 }

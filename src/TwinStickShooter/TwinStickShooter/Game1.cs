@@ -23,7 +23,8 @@ namespace TwinStickShooter
         PoolManager pool;
 
         PlayerWGun player;
-        HeadsUpDisplay hb;
+        HeadsUpDisplay hud;
+        ScoreManager score;
 
         EnemyManager em;
         ShotManager sm;
@@ -130,6 +131,9 @@ namespace TwinStickShooter
             graphics.PreferredBackBufferHeight = 700;
             graphics.ApplyChanges();
 
+            score = new ScoreManager();
+            this.Services.AddService(typeof(IScoreManager), score);
+
             console = new GameConsole(this);
             this.Components.Add(console);
 
@@ -148,8 +152,10 @@ namespace TwinStickShooter
             sm = new ShotManager(this);
             this.Components.Add(sm);
 
-            hb = new HeadsUpDisplay(this, player);
-            this.Components.Add(hb);
+            hud = new HeadsUpDisplay(this, player);
+            this.Components.Add(hud);
+
+
         }
     }
 }

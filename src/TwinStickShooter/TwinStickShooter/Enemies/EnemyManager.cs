@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Projectiles;
+using TwinStickShooter.HUD;
 using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Enemies
@@ -28,6 +29,7 @@ namespace TwinStickShooter.Enemies
         string enemyShotPoolTag = "EnemyShots";
         int enemyShotPoolSize = 400;
         PoolManager poolManager;
+        ScoreManager scoreManager;
 
         //the player of our game
         Player.PlayerWGun player;
@@ -35,6 +37,7 @@ namespace TwinStickShooter.Enemies
         public EnemyManager(Game game, Player.PlayerWGun _player) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+            scoreManager = (ScoreManager)this.Game.Services.GetService<IScoreManager>();
 
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, enemyShotPoolSize, enemyShotPoolTag);
             poolManager.InstantiatePool(PoolManager.ClassType.Enemy, game, enemyPoolSize, enemyPoolTag);           
@@ -56,6 +59,8 @@ namespace TwinStickShooter.Enemies
 
             //checks to see if our enemies hit anything
             CheckCollision(gameTime);
+
+            scoreManager.waveNumber = WaveNumber;
 
             base.Update(gameTime);
         }

@@ -48,6 +48,8 @@
     <Compile Include="EntitiyTraits\IDamagable.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="HUD\HeadsUpDisplay.cs" />
+    <Compile Include="HUD\HudText.cs" />
+    <Compile Include="HUD\ScoreManager.cs" />
     <Compile Include="HUD\StatusBar.cs" />
     <Compile Include="ObjectPool\IPoolManager.cs" />
     <Compile Include="ObjectPool\Pool.cs" />

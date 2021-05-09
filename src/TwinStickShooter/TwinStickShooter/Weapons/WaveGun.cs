@@ -10,7 +10,7 @@ namespace TwinStickShooter.Weapons
 {
     class WaveGun : RangedWeapon
     {
-        float WaveGunDamage = 1;
+        float WaveGunDamage = 1.7f;
         int numberOfBullets = 10;
         float bulletOffset = .09f;
         float cooldownTime = 1000;
