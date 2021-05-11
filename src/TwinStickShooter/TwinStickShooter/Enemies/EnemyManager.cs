@@ -122,7 +122,7 @@ namespace TwinStickShooter.Enemies
                     //enemy and enemy collision
                     foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
                     {
-                        if (other.Enabled)
+                        if (other.Enabled && other.type != "Ranged" || other.type == enemy.type)
                         {
                             //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
                             var dist = Vector2.Distance(enemy.Location, other.Location);

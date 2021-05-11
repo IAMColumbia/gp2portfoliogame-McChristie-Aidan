@@ -18,6 +18,7 @@ namespace TwinStickShooter.Enemies
         public Vector2 desired;
         Vector2 acceleration;
         public Vector2 playerLoc;
+        public string type;
         //unused currently
         //public Vector2 lastLocation;
 

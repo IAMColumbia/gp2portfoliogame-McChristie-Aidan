@@ -84,15 +84,6 @@ namespace TwinStickShooter
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            console.Log("Wave Number : ", em.WaveNumber.ToString());
-            console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
-            foreach (DrawableSprite item in pool.PoolDictionary["Enemies"].objectPool)
-            {
-                if (item.Enabled)
-                {
-                    console.Log("Enemy type : ", item.type);
-                }
-            }
 
             //TODO need to fix this.
             if (player.Health <= 0)

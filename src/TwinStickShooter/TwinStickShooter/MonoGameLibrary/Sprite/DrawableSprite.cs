@@ -14,8 +14,7 @@ namespace MonoGameLibrary.Sprite
     /// </summary>
     public class DrawableSprite : Sprite
     {
-        protected SpriteBatch spriteBatch;
-        public string type;
+        protected SpriteBatch spriteBatch;       
         
         public DrawableSprite(Game game)
             : base(game)
