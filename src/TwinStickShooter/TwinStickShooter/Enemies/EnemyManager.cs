@@ -247,6 +247,7 @@ namespace TwinStickShooter.Enemies
                         int typeNum = r.Next(1, 4);
                         
                         //This is a huge hot mess.
+
                         switch (typeNum)
                         {
                             case 1:

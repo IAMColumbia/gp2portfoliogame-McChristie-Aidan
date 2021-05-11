@@ -14,7 +14,7 @@ namespace TwinStickShooter.Pickups
     {
         public float pickUpValue;
 
-        public enum PickUpType { AttackSpeed, Health }
+        public enum PickUpType { AttackSpeed, Health, Weapon }
 
         public PickUpType type;
 
@@ -44,6 +44,9 @@ namespace TwinStickShooter.Pickups
                     break;
                 case PickUpType.Health:
                     this.DrawColor = Color.Green;
+                    break;
+                case PickUpType.Weapon:
+                    this.DrawColor = Color.Blue;
                     break;
                 default:
                     break;
