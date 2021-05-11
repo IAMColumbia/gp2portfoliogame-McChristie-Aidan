@@ -15,6 +15,7 @@ namespace TwinStickShooter.ObjectPool
         Dictionary<string, Pool> poolDictionary;
         GameConsole console;
 
+        //technical debt i need to learn how to do generics in xna
         public enum ClassType { Enemy, Shot, Pickup }
 
         public Dictionary<string, Pool> PoolDictionary
@@ -79,9 +80,9 @@ namespace TwinStickShooter.ObjectPool
                 for (int i = 0; i < poolSize; i++)
                 {
                     switch (type)
-                    {
+                    {       
                         case ClassType.Enemy:
-                            Enemies.Enemy e = new Enemies.Enemy(game);
+                            Enemies.BasicEnemy e = new Enemies.BasicEnemy(game);
                             e.Initialize();
                             e.Enabled = false;
                             queue.Enqueue(e);

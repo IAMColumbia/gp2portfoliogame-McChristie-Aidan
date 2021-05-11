@@ -12,5 +12,7 @@ namespace TwinStickShooter.HUD
     class ScoreManager : IScoreManager
     {
         public int waveNumber;
+
+        public int score;
     }
 }

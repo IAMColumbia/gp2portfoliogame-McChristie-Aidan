@@ -14,6 +14,7 @@ namespace TwinStickShooter.HUD
         StatusBar cooldownBar;
 
         HudText waveNumber;
+        HudText scoreNumber;
 
         Player.PlayerWGun targetPlayer;
         List<DrawableGameComponent> activeHudElements;
@@ -36,6 +37,9 @@ namespace TwinStickShooter.HUD
             waveNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 40), Color.Black);
             activeHudElements.Add(waveNumber);
 
+            scoreNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 80), Color.Black);
+            activeHudElements.Add(scoreNumber);
+
             targetPlayer = player;
         }
 
@@ -48,6 +52,8 @@ namespace TwinStickShooter.HUD
 
             waveNumber.text = "Wave Number: " + scoreManager.waveNumber.ToString();
 
+            scoreNumber.text = "Score: " + scoreManager.score;
+
             foreach (DrawableGameComponent item in activeHudElements)
             {
                 item.Update(gameTime);
@@ -57,9 +63,7 @@ namespace TwinStickShooter.HUD
         }
 
         public override void Draw(GameTime gameTime)
-        {
-            
-
+        {         
             foreach (DrawableGameComponent item in activeHudElements)
             {
                 item.Draw(gameTime);
