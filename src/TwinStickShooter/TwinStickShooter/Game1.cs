@@ -8,6 +8,7 @@ using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Enemies;
 using TwinStickShooter.Projectiles;
 using TwinStickShooter.Pickups;
+using TwinStickShooter.HUD;
 
 namespace TwinStickShooter
 {
@@ -22,6 +23,8 @@ namespace TwinStickShooter
         PoolManager pool;
 
         PlayerWGun player;
+        HeadsUpDisplay hud;
+        ScoreManager score;
 
         EnemyManager em;
         ShotManager sm;
@@ -83,6 +86,13 @@ namespace TwinStickShooter
                 Exit();
             console.Log("Wave Number : ", em.WaveNumber.ToString());
             console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
+            foreach (DrawableSprite item in pool.PoolDictionary["Enemies"].objectPool)
+            {
+                if (item.Enabled)
+                {
+                    console.Log("Enemy type : ", item.type);
+                }
+            }
 
             //TODO need to fix this.
             if (player.Health <= 0)
@@ -128,6 +138,9 @@ namespace TwinStickShooter
             graphics.PreferredBackBufferHeight = 700;
             graphics.ApplyChanges();
 
+            score = new ScoreManager();
+            this.Services.AddService(typeof(IScoreManager), score);
+
             console = new GameConsole(this);
             this.Components.Add(console);
 
@@ -145,6 +158,11 @@ namespace TwinStickShooter
 
             sm = new ShotManager(this);
             this.Components.Add(sm);
+
+            hud = new HeadsUpDisplay(this, player);
+            this.Components.Add(hud);
+
+
         }
     }
 }

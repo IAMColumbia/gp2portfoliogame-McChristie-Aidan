@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using TwinStickShooter.ObjectPool;
 using TwinStickShooter.Projectiles;
+using TwinStickShooter.HUD;
 using MonoGameLibrary.Sprite;
 
 namespace TwinStickShooter.Enemies
@@ -24,10 +25,13 @@ namespace TwinStickShooter.Enemies
 
         //enemy pool variables
         string enemyPoolTag = "Enemies";
-        int enemyPoolSize = 200;
+        int enemyPoolSize = 100;
+
         string enemyShotPoolTag = "EnemyShots";
         int enemyShotPoolSize = 400;
+
         PoolManager poolManager;
+        ScoreManager scoreManager;
 
         //the player of our game
         Player.PlayerWGun player;
@@ -35,6 +39,7 @@ namespace TwinStickShooter.Enemies
         public EnemyManager(Game game, Player.PlayerWGun _player) : base(game)
         {
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
+            scoreManager = (ScoreManager)this.Game.Services.GetService<IScoreManager>();
 
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, enemyShotPoolSize, enemyShotPoolTag);
             poolManager.InstantiatePool(PoolManager.ClassType.Enemy, game, enemyPoolSize, enemyPoolTag);           
@@ -56,6 +61,8 @@ namespace TwinStickShooter.Enemies
 
             //checks to see if our enemies hit anything
             CheckCollision(gameTime);
+
+            scoreManager.waveNumber = WaveNumber;
 
             base.Update(gameTime);
         }
@@ -91,6 +98,7 @@ namespace TwinStickShooter.Enemies
                                         Pickups.PickUp p = (Pickups.PickUp)poolManager.PoolDictionary["PickUps"].SpawnFromPool(enemy.Location, new Vector2(0, 0));
                                         p.type = (Pickups.PickUp.PickUpType)r.Next(0, Enum.GetNames(typeof(Pickups.PickUp.PickUpType)).Length);
                                         enemy.Dies(gameTime);
+                                        scoreManager.score += 10;
                                     }
 
                                     numOfEnemiesKilled++;
@@ -114,8 +122,7 @@ namespace TwinStickShooter.Enemies
                     //enemy and enemy collision
                     foreach (Enemy other in poolManager.PoolDictionary[enemyPoolTag].objectPool)
                     {
-                        if (other.Enabled && other.enemyType != Enemy.EnemyType.Ranged 
-                            || other.enemyType == Enemy.EnemyType.Ranged && enemy.enemyType == Enemy.EnemyType.Ranged)
+                        if (other.Enabled)
                         {
                             //code barrowed form my old sim and serious homeworks. makes the enemies bounce off of one another
                             var dist = Vector2.Distance(enemy.Location, other.Location);
@@ -166,8 +173,7 @@ namespace TwinStickShooter.Enemies
             foreach (Enemy enemy in poolManager.PoolDictionary[enemyPoolTag].objectPool)
             {
                 if (enemy.Enabled)
-                {
-                    
+                {                    
                     enemy.playerLoc = player.Location;
                     enemy.Seek(player.Location, gameTime);
                 }
@@ -236,29 +242,75 @@ namespace TwinStickShooter.Enemies
                     {
                         float randomSpawnX = (float)r.Next(0, Game.GraphicsDevice.Viewport.Width);
                         float randomSpawnY = (float)r.Next(-300, 0);
+                        Vector2 spawnLoc = new Vector2(randomSpawnX, randomSpawnY);
                         //RandomSpawn();
-                        int typeNum = r.Next(0, 3);
-                        SpawnEnemyOfType((Enemy.EnemyType)typeNum, new Vector2(randomSpawnX, randomSpawnY), new Vector2(0,0));                        
+                        int typeNum = r.Next(1, 4);
+                        
+                        //This is a huge hot mess.
+                        switch (typeNum)
+                        {
+                            case 1:
+                                //Enemy enemy = (Enemy)poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(spawnLoc, new Vector2(0, 0));
+                                //enemy = new RangedEnemy(this.Game);
+                                //enemy.Initialize();
+                                DrawableSprite s = (Enemy)poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
+
+                                s.Direction = Vector2.Zero;
+                                s.Direction.Normalize();
+                                s.Enabled = true;
+                                s = new BasicEnemy(this.Game);
+                                s.Location = spawnLoc;
+
+                                poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(s);
+
+                                break;
+                            case 2:
+                                DrawableSprite t = (Enemy)poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
+
+                                t.Direction = Vector2.Zero;
+                                t.Direction.Normalize();
+                                t.Enabled = true;
+                                t = new RangedEnemy(this.Game);
+                                t.Location = spawnLoc;
+
+                                poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(t);
+                                break;
+                            case 3:
+                                DrawableSprite e = poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
+
+                                e.Direction = Vector2.Zero;
+                                e.Direction.Normalize();
+                                e.Enabled = true;
+                                e = new TankEnemy(this.Game);
+                                e.Location = spawnLoc;
+
+                                poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(e);
+                                break;
+                            default:                               
+                                break;
+                        }
+
+                        //switch (typeNum)
+                        //{
+                        //    case 1:
+                        //        //Enemy e = (Enemy)poolManager.PoolDictionary[enemyPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 0));
+                        //        break;
+                        //    case 2:
+                        //        RangedEnemy re = (RangedEnemy)poolManager.PoolDictionary["Ranged"].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 0));
+                        //        break;
+                        //    case 3:
+                        //        TankEnemy te = (TankEnemy)poolManager.PoolDictionary[tankPoolTag].SpawnFromPool(new Vector2(randomSpawnX, randomSpawnY), new Vector2(0, 0));
+                        //        break;
+                        //    default:
+                        //        break;
+                        //}
+
                     }
                     currentCooldown = 0;
                 }
             }
         }
-
-        //technical debt i should figure a way to put this in pool
-        void SpawnEnemyOfType (Enemies.Enemy.EnemyType type, Vector2 spawnLocation, Vector2 fireDirection)
-        {
-            Enemy enemy = (Enemy)poolManager.PoolDictionary[enemyPoolTag].objectPool.Dequeue();
-
-            enemy.Location = spawnLocation;
-            enemy.Direction = fireDirection;
-            enemy.Direction.Normalize();
-            enemy.enemyType = type;
-            enemy.Enabled = true;
-
-            poolManager.PoolDictionary[enemyPoolTag].objectPool.Enqueue(enemy);
-        }
-
+       
         public void Reset()
         {
             numOfEnemiesToSpawn = 5;
