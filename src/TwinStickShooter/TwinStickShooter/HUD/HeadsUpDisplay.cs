@@ -10,11 +10,13 @@ namespace TwinStickShooter.HUD
 {
     class HeadsUpDisplay : DrawableGameComponent
     {
+        //the entire hud system could probably be architectured way better but I felt rushed
         StatusBar healthBar;
         StatusBar cooldownBar;
 
         HudText waveNumber;
         HudText scoreNumber;
+        HudText gunType;
 
         Player.PlayerWGun targetPlayer;
         List<DrawableGameComponent> activeHudElements;
@@ -37,8 +39,11 @@ namespace TwinStickShooter.HUD
             waveNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 40), Color.Black);
             activeHudElements.Add(waveNumber);
 
-            scoreNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 80), Color.Black);
+            scoreNumber = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 65), Color.Black);
             activeHudElements.Add(scoreNumber);
+
+            gunType = new HudText(game, new Vector2(GraphicsDevice.Viewport.Width - 300, 120), Color.Black);
+            activeHudElements.Add(gunType);
 
             targetPlayer = player;
         }
@@ -53,6 +58,8 @@ namespace TwinStickShooter.HUD
             waveNumber.text = "Wave Number: " + scoreManager.waveNumber.ToString();
 
             scoreNumber.text = "Score: " + scoreManager.score;
+
+            gunType.text = "Weapon: " + targetPlayer.gun.WeaponName;
 
             foreach (DrawableGameComponent item in activeHudElements)
             {
