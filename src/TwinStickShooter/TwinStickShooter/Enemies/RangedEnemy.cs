@@ -14,13 +14,14 @@ namespace TwinStickShooter.Enemies
         float speed = 175;
         float health = 7;
         float rangedDamage = 2;
-        float fireDistance = 400;
+        float fireDistance = 450;
 
         bool onCooldown;
         float currentCooldown;
 
         string enemyShotPoolTag = "EnemyShots";
         Weapon gun;
+        Random r;
 
         public RangedEnemy(Game game) : base (game)
         {
@@ -29,7 +30,10 @@ namespace TwinStickShooter.Enemies
             this.damage = rangedDamage;
             this.type = "Ranged";
 
+            r = new Random();
+            fireDistance += r.Next(-50, 51);
             gun = new HandGun(game, enemyShotPoolTag);
+
 
             this.LoadContent();
         }

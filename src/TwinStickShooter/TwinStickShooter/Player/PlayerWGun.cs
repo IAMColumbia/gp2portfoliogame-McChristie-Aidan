@@ -30,7 +30,6 @@ namespace TwinStickShooter.Player
         public Weapon gun;
 
         Random r;
-        GameConsole console;
         HUD.ScoreManager score;
         PoolManager poolManager;
 
@@ -38,7 +37,6 @@ namespace TwinStickShooter.Player
         {           
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
-            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
             score = (HUD.ScoreManager)this.Game.Services.GetService<HUD.IScoreManager>();
 
             r = new Random();
@@ -54,10 +52,6 @@ namespace TwinStickShooter.Player
             GunSwap();
             //have we hit something
             CheckCollision(gameTime);
-            //useful info
-            console.Log("Player Health : ", this.Health.ToString());
-            console.Log("player current gun : ", this.gun.WeaponName);
-            console.Log("player cooldown: ", cooldownTime.ToString());
 
             base.Update(gameTime);
         }
@@ -76,7 +70,6 @@ namespace TwinStickShooter.Player
             if (onCooldown)
             {
                 cooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                console.Log("Gun cooldown : ", cooldownTime.ToString());
           
                 if (cooldownTime <= 0f)
                 {
