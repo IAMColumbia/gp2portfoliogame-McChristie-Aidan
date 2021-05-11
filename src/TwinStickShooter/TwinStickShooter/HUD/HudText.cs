@@ -35,6 +35,7 @@ namespace TwinStickShooter.HUD
             font = this.Game.Content.Load<SpriteFont>("Text");
             base.Initialize();
         }
+
         public override void Update(GameTime gameTime)
         {
             

@@ -29,14 +29,17 @@ namespace TwinStickShooter.Player
 
         public Weapon gun;
 
-        GameConsole console;
+        Random r;
+        HUD.ScoreManager score;
         PoolManager poolManager;
 
         public PlayerWGun(Game game) : base(game)
         {           
             poolManager = (PoolManager)this.Game.Services.GetService<IPoolManager>();
             poolManager.InstantiatePool(PoolManager.ClassType.Shot, game, shotPoolSize, shotPoolTag);
-            console = (GameConsole)this.Game.Services.GetService<IGameConsole>();
+            score = (HUD.ScoreManager)this.Game.Services.GetService<HUD.IScoreManager>();
+
+            r = new Random();
 
             Reset(game);
         }
@@ -49,10 +52,6 @@ namespace TwinStickShooter.Player
             GunSwap();
             //have we hit something
             CheckCollision(gameTime);
-            //useful info
-            console.Log("Player Health : ", this.Health.ToString());
-            console.Log("player current gun : ", this.gun.WeaponName);
-            console.Log("player cooldown: ", cooldownTime.ToString());
 
             base.Update(gameTime);
         }
@@ -71,7 +70,6 @@ namespace TwinStickShooter.Player
             if (onCooldown)
             {
                 cooldownTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                console.Log("Gun cooldown : ", cooldownTime.ToString());
           
                 if (cooldownTime <= 0f)
                 {
@@ -132,6 +130,24 @@ namespace TwinStickShooter.Player
                                     break;
                                 case Pickups.PickUp.PickUpType.Health:
                                     this.Health += pickUp.pickUpValue;
+                                    break;
+                                case Pickups.PickUp.PickUpType.Weapon:
+                                    int num = r.Next(1, 4);
+                                    score.score += 5;
+                                    switch (num)
+                                    {
+                                        case 1:
+                                            gun = new HandGun(this.Game, shotPoolTag);
+                                            break;
+                                        case 2:
+                                            gun = new AssultRifle(this.Game, shotPoolTag);
+                                            break;
+                                        case 3:
+                                            gun = new WaveGun(this.Game, shotPoolTag);
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                     break;
                                 default:
                                     break;

@@ -18,6 +18,10 @@ namespace TwinStickShooter
     /// 
     public class Game1 : Game
     {
+        enum GameState { Playing, GameOver}
+
+        GameState gameState;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         PoolManager pool;
@@ -36,6 +40,7 @@ namespace TwinStickShooter
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            gameState = GameState.Playing;
 
             InitializeGame();
         }
@@ -84,20 +89,20 @@ namespace TwinStickShooter
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            console.Log("Wave Number : ", em.WaveNumber.ToString());
-            console.Log("Num of enemies in the wave : ", em.numOfEnemiesToSpawn.ToString());
-            foreach (DrawableSprite item in pool.PoolDictionary["Enemies"].objectPool)
-            {
-                if (item.Enabled)
-                {
-                    console.Log("Enemy type : ", item.type);
-                }
-            }
 
             //TODO need to fix this.
             if (player.Health <= 0)
             {
+                gameState = GameState.GameOver;
+                player.Enabled = false;
+            }            
+
+            if (Keyboard.GetState().IsKeyDown(Keys.R))
+            {
+                player.Enabled = true;
                 reset();
+                gameState = GameState.Playing;
+                
             }
 
             base.Update(gameTime);
@@ -111,6 +116,21 @@ namespace TwinStickShooter
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            if (gameState == GameState.GameOver)
+            {
+                SpriteFont font = this.Content.Load<SpriteFont>("Text");
+
+                string gameOverText = "Game Over";
+                string finalStats = "You're score is : " + score.score;
+                string playAgainText = "Press 'R' to restart";
+
+
+                spriteBatch.Begin();
+                spriteBatch.DrawString(font, gameOverText, new Vector2(this.GraphicsDevice.Viewport.Width / 2 - font.MeasureString(gameOverText).Length() / 2, this.GraphicsDevice.Viewport.Height / 3), Color.Black);
+                spriteBatch.DrawString(font, finalStats, new Vector2(this.GraphicsDevice.Viewport.Width / 2 - font.MeasureString(finalStats).Length() / 2, this.GraphicsDevice.Viewport.Height / 2), Color.Black);
+                spriteBatch.DrawString(font, playAgainText, new Vector2(this.GraphicsDevice.Viewport.Width / 2 - font.MeasureString(playAgainText).Length() / 2, this.GraphicsDevice.Viewport.Height / 2 + 30), Color.Black);
+                spriteBatch.End();
+            }
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
@@ -129,7 +149,6 @@ namespace TwinStickShooter
             this.player.Reset(this);
 
             this.em.Reset();
-
         }
 
         void InitializeGame()
@@ -137,6 +156,8 @@ namespace TwinStickShooter
             graphics.PreferredBackBufferWidth = 1000;
             graphics.PreferredBackBufferHeight = 700;
             graphics.ApplyChanges();
+
+            gameState = GameState.Playing;
 
             score = new ScoreManager();
             this.Services.AddService(typeof(IScoreManager), score);
