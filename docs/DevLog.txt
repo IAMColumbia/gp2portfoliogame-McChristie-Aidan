@@ -5,10 +5,9 @@
 - My main systems and patterns are Object Pool and Strategy 
 # GAME STRUCTURE
 
-# WHAT NEEDS TO BE IMPROVED
-- Enemies should be spawned all around the screen instead of just above and ideally in patterns.
-- Some of my classes are very bloated and should be split into different parent classes.
-- Needs to run off of game state.
-- I would like screen shake 
-- Game balance also could use work
-- The lack of a UI needs to be changed
+# TECHNICAL DEBT
+- The pickup system needs to be refactored and handle better like I did for the enemies.
+- I never did figure out a way to instatiate a pool using c# generics but i feel like that would be the ideal instead of what i have now.
+- the HUD is hot mess that was quickly throw together. the HUD manager is way wordier than i think it needs to be.
+- I should refactor my code to not be dependent on monogame right off of the bat
+-
